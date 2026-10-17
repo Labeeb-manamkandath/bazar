@@ -8,7 +8,7 @@ A single-page, pre-launch site for Bazar. Plain HTML, CSS and JavaScript with no
 index.html          The whole page (styles and scripts inline)
 assets/brand/       Logo files made from the supplied logo (transparent + light versions)
 assets/img/         Concept product mockups, each in two sizes (-sm = 800px, full = up to 1600px)
-assets/             Favicons, apple-touch-icon, og-image.jpg (1200×630 share image)
+assets/             Favicons, apple-touch-icon, og-coming-soon.jpg (1200×630 share image)
 ```
 
 ## Sections
@@ -36,7 +36,5 @@ python3 -m http.server 8000
 
 - **WhatsApp link.** All WhatsApp buttons use `https://wa.me/message/TOTXU35IP3ANE1`
   (contact button, footer, floating button).
-- **Share image URL.** `og:image` uses `/assets/og-image.jpg`. Some platforms need a full URL,
-  so once the domain is final, change it to e.g. `https://www.clickfor.in/assets/og-image.jpg`.
 - **Mockups are illustrated concepts**, not photographs. Swap any file in `assets/img/` for a real
   photo with the same name (keep both sizes) when photos are available.
