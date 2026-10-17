@@ -11,7 +11,8 @@
 <meta property="og:site_name" content="Bazar by clickfor.in">
 <meta property="og:title" content="Bazar by clickfor.in | Your Online Store for Daily Essentials">
 <meta property="og:description" content="Meet Bazar by clickfor.in, your upcoming destination for daily essentials. Stay connected and contact us directly.">
-<meta property="og:image" content="/assets/og-image.jpg">
+<meta property="og:image" content="https://www.clickfor.in/assets/og-image.jpg">
+<meta property="og:url" content="https://www.clickfor.in/">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -240,12 +241,14 @@ section{scroll-margin-top:calc(var(--nav-h) + env(safe-area-inset-top,0px))}
 .lb-nav{display:flex;gap:10px}
 
 /* ---------- CONTACT ---------- */
-.contact{background:var(--green);color:var(--rice);padding-block:clamp(80px,10vw,140px);position:relative;overflow:hidden;isolation:isolate}
+.contact{background:var(--green);color:var(--rice);padding-block:clamp(20px,3vw,36px) clamp(80px,10vw,140px);position:relative;overflow:hidden;isolation:isolate}
 .contact::before{content:"";position:absolute;z-index:-1;left:-12vw;top:-30%;width:min(55vw,700px);aspect-ratio:1;border-radius:50%;border:2px dashed var(--line-light)}
-.contact .eyebrow{color:var(--rice);opacity:.85;margin-bottom:22px}
+.contact-text{margin-top:clamp(48px,6vw,80px)}
+.contact-wa{margin-top:28px;display:flex}
+.contact-wa .btn{min-height:60px;padding:0 30px;font-size:1.05rem}
 .contact h2{font-size:clamp(2.4rem,6vw,5rem);font-weight:800;max-width:14ch}
 .contact .intro{margin-top:20px;font-size:1.15rem;opacity:.85;max-width:46ch}
-.phone-card{margin-top:clamp(40px,6vw,64px);background:var(--rice);color:var(--green);border-radius:18px;padding:clamp(24px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;position:relative;overflow:hidden}
+.phone-card{margin-top:0;background:var(--rice);color:var(--green);border-radius:18px;padding:clamp(24px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;position:relative;overflow:hidden}
 .phone-card::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:var(--orange);opacity:.95}
 .phone-label{font-weight:700;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange-ink);margin-bottom:12px}
 .phone-wrap{container-type:inline-size;min-width:0}
@@ -261,7 +264,10 @@ section{scroll-margin-top:calc(var(--nav-h) + env(safe-area-inset-top,0px))}
 @media (max-width:760px){
   .phone-card{grid-template-columns:1fr}
   .phone-card::after{width:120px;height:120px;right:-50px;top:-50px}
-  .contact-actions .btn{width:100%}
+  .contact-actions .btn,.contact-wa .btn{width:100%}
+  .phone-number{font-size:min(12.6cqi,3rem);white-space:normal;line-height:1}
+  .phone-number .cc{display:block;font-size:.55em;margin-bottom:6px;color:var(--orange-ink)}
+  .phone-number .num{white-space:nowrap}
 }
 
 /* ---------- FOOTER ---------- */
@@ -453,15 +459,10 @@ section{scroll-margin-top:calc(var(--nav-h) + env(safe-area-inset-top,0px))}
 <!-- ===== 5. CONTACT ===== -->
 <section class="contact" id="contact" aria-labelledby="contact-title">
   <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow">Contact</p>
-      <h2 id="contact-title">Let’s Stay Connected</h2>
-      <p class="intro">Have a question or want to know more about Bazar? We’d love to hear from you.</p>
-    </div>
-    <div class="phone-card reveal">
+    <div class="phone-card">
       <div class="phone-wrap">
-        <p class="phone-label">Phone &amp; WhatsApp</p>
-        <a class="phone-number" href="tel:+918086777790" aria-label="Call +91 8086 7777 90">+91 8086 7777 90</a>
+        <p class="phone-label">Call or WhatsApp us</p>
+        <a class="phone-number" href="tel:+918086777790" aria-label="Call +91 8086 7777 90"><span class="cc">+91 </span><span class="num">8086 7777 90</span></a>
         <div><button class="copy-btn" id="copyBtn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span id="copyText">Copy number</span></button></div>
@@ -470,6 +471,12 @@ section{scroll-margin-top:calc(var(--nav-h) + env(safe-area-inset-top,0px))}
         <a class="btn btn-green" href="tel:+918086777790">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           Call Us</a>
+      </div>
+    </div>
+    <div class="contact-text reveal">
+      <h2 id="contact-title">Let’s Stay Connected</h2>
+      <p class="intro">Have a question or want to know more about Bazar? We’d love to hear from you.</p>
+      <div class="contact-wa">
         <a class="btn btn-wa" href="https://wa.me/message/TOTXU35IP3ANE1" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.6 8.6 0 1 1 8 19.4z"/><path d="M9 8.6c0 3.3 2.9 6.3 6.3 6.4l1-1.3-1.8-1-1 .8a5 5 0 0 1-2.4-2.4l.8-1-1-1.8z" fill="currentColor" stroke-width="1"/></svg>
           Chat on WhatsApp</a>
