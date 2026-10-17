@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bazar by clickfor.in | Your Online Store for Daily Essentials</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Meet Bazar by clickfor.in, your upcoming destination for daily essentials. Stay connected and contact us directly.">
+<meta name="theme-color" content="#1B3E1F">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bazar by clickfor.in">
+<meta property="og:title" content="Bazar by clickfor.in | Your Online Store for Daily Essentials">
+<meta property="og:description" content="Meet Bazar by clickfor.in, your upcoming destination for daily essentials. Stay connected and contact us directly.">
+<meta property="og:image" content="/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout concept: a market-stall launch campaign — striped awning edge, deep green ground, and the logo's orange dot as the recurring mark. Single light brand theme by choice. */
+:root{
+  --green:#1B3E1F;        /* logo green */
+  --green-deep:#122915;
+  --green-soft:#24502A;
+  --orange:#E4762C;       /* logo dot */
+  --orange-ink:#A9480F;   /* orange for small text on paper */
+  --brown:#34140A;        /* logo "clickfor" brown, body ink */
+  --paper:#F5F3EA;
+  --rice:#FAF4E2;
+  --sand:#ECE6D7;        /* neutral studio backdrop for the product preview */
+  --line:rgba(52,20,10,.14);
+  --line-light:rgba(250,244,226,.18);
+  --wa:#25D366;
+  --font-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --font-body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --nav-h:72px;
+  --radius:10px;
+  --max:1240px;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--brown);font-family:var(--font-body);font-size:17px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--green-deep)}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--font-display);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--orange);color:var(--brown);padding:10px 14px;border-radius:6px;font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+.wrap{max-width:var(--max);margin-inline:auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+section{scroll-margin-top:calc(var(--nav-h) + env(safe-area-inset-top,0px))}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase}
+.eyebrow::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--orange)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:999px;font:700 1rem/1 var(--font-body);text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .2s ease,background-color .2s ease,color .2s ease,box-shadow .2s ease;white-space:nowrap}
+.btn svg{width:20px;height:20px;flex:none}
+.btn:hover{transform:translateY(-2px)}
+.btn-orange{background:var(--orange);color:var(--brown)}
+.btn-orange:hover{box-shadow:0 10px 24px -8px rgba(228,118,44,.7)}
+.btn-ghost-light{border-color:var(--line-light);color:var(--rice);background:transparent}
+.btn-ghost-light:hover{border-color:var(--rice)}
+.btn-rice{background:var(--rice);color:var(--green)}
+.btn-wa{background:var(--wa);color:#0B2E14}
+.btn-wa:hover{box-shadow:0 10px 24px -8px rgba(37,211,102,.6)}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--green-deep);transition:box-shadow .3s ease}
+.nav.scrolled{box-shadow:0 8px 24px -10px rgba(0,0,0,.45)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand-link{display:flex;align-items:center}
+.brand-link img{height:38px;width:auto}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a:not(.btn){color:var(--rice);text-decoration:none;font-weight:600;font-size:.95rem;opacity:.85;position:relative;padding:6px 0}
+.nav-links a:not(.btn)::after{content:"";position:absolute;left:50%;bottom:-2px;width:6px;height:6px;border-radius:50%;background:var(--orange);transform:translateX(-50%) scale(0);transition:transform .2s ease}
+.nav-links a:not(.btn):hover{opacity:1}
+.nav-links a:not(.btn):hover::after,.nav-links a.active::after{transform:translateX(-50%) scale(1)}
+.nav-links .btn{min-height:44px;padding:0 20px;font-size:.95rem}
+.menu-btn{display:none;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line-light);background:transparent;color:var(--rice);cursor:pointer;align-items:center;justify-content:center}
+.menu-btn svg{width:22px;height:22px}
+@media (max-width:860px){
+  .menu-btn{display:inline-flex}
+  .nav-links{position:fixed;left:0;right:0;top:calc(var(--nav-h) + env(safe-area-inset-top,0px));flex-direction:column;align-items:stretch;gap:0;background:var(--green-deep);padding:8px max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));border-top:1px solid var(--line-light);transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .2s ease,transform .2s ease,visibility .2s}
+  .nav-links.open{opacity:1;transform:none;visibility:visible}
+  .nav-links a:not(.btn){font-family:var(--font-display);font-weight:700;font-size:1.4rem;padding:16px 0;border-bottom:1px solid var(--line-light);opacity:1}
+  .nav-links a:not(.btn)::after{display:none}
+  .nav-links .btn{margin-top:20px;min-height:54px}
+}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;background:var(--green);color:var(--rice);overflow:hidden;isolation:isolate}
+.awning{height:34px;background:repeating-linear-gradient(90deg,var(--green-soft) 0 56px,var(--rice) 56px 112px);position:relative}
+.awning::after{content:"";position:absolute;left:0;right:0;top:100%;height:18px;
+  background:radial-gradient(28px 18px at 28px 0,var(--green-soft) 98%,transparent 100%) 0 0/112px 18px repeat-x,
+             radial-gradient(28px 18px at 84px 0,var(--rice) 98%,transparent 100%) 0 0/112px 18px repeat-x}
+.hero-sun{position:absolute;z-index:-1;right:-14vw;top:12%;width:min(62vw,820px);aspect-ratio:1;border-radius:50%;background:var(--orange);opacity:.95}
+.hero-ring{position:absolute;z-index:-1;left:-140px;bottom:-200px;width:520px;aspect-ratio:1;border-radius:50%;border:2px dashed var(--line-light)}
+.hero-dots span{position:absolute;z-index:-1;border-radius:50%;background:var(--rice);opacity:.18;animation:drift 9s ease-in-out infinite}
+@keyframes drift{50%{transform:translateY(-18px)}}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(28px,5vw,72px);align-items:center;padding-block:clamp(56px,7vw,96px) clamp(56px,6vw,88px);min-height:calc(88svh - var(--nav-h))}
+.hero-copy{min-width:0;container-type:inline-size}
+.hero .eyebrow{color:var(--rice);opacity:.9;margin-bottom:22px}
+.headline{font-weight:800;font-size:min(17.5cqi,9rem);line-height:.88;letter-spacing:-.035em;margin:0 0 30px;text-transform:uppercase}
+.headline .line{display:block;overflow:hidden;padding-bottom:.04em}
+.headline .line span{display:inline-block;animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+.headline .line:nth-child(2) span{animation-delay:.12s}
+.headline .dot{display:inline-block;width:.2em;height:.2em;border-radius:50%;background:var(--orange);margin-left:.04em;vertical-align:baseline;box-shadow:0 0 0 .04em var(--green);animation:bounce 2.6s cubic-bezier(.3,0,.3,1) 1s infinite}
+@keyframes rise{from{transform:translateY(105%)}}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-.32em)}}
+.tagline{font-family:var(--font-display);font-weight:500;font-size:clamp(1.15rem,2.1vw,1.6rem);line-height:1.3;max-width:24ch;margin-bottom:12px}
+.support{font-size:1.08rem;opacity:.82;max-width:40ch;margin-bottom:34px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.hero-actions .btn-ghost-light svg{transition:transform .2s ease}
+.hero-actions .btn-ghost-light:hover svg{transform:translateY(3px)}
+
+/* game panel */
+.game{position:relative;min-width:0;justify-self:end;width:100%;max-width:440px}
+.game-frame{background:var(--green-deep);border-radius:18px;padding:12px;box-shadow:0 30px 60px -24px rgba(0,0,0,.55),0 0 0 1px rgba(250,244,226,.08)}
+.game-hud{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 8px 12px;font-weight:700;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase}
+.game-hud .title{font-family:var(--font-display);letter-spacing:.02em;text-transform:none;font-size:.95rem}
+.hud-stats{display:flex;align-items:center;gap:16px;font-variant-numeric:tabular-nums}
+.hud-stats b{font-family:var(--font-display);font-size:1.05rem;letter-spacing:0;color:var(--orange);margin-left:6px}
+.lives{display:flex;gap:5px}
+.lives i{width:10px;height:10px;border-radius:50%;background:var(--orange);transition:background-color .2s,transform .2s}
+.lives i.lost{background:rgba(250,244,226,.18);transform:scale(.8)}
+.stage{position:relative;aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--green-soft)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.stage.playing canvas{touch-action:none;cursor:grab}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:28px;background:rgba(18,41,21,.72);backdrop-filter:blur(2px)}
+.overlay h3{font-size:clamp(1.4rem,2.6vw,1.9rem)}
+.overlay p{font-size:.98rem;opacity:.88;max-width:30ch}
+.overlay .keys{display:flex;gap:6px;align-items:center;justify-content:center;font-size:.85rem;opacity:.8;flex-wrap:wrap}
+.overlay kbd{font:700 .8rem var(--font-body);border:1.5px solid var(--line-light);border-radius:6px;padding:3px 8px}
+.final{font-family:var(--font-display);font-weight:800;font-size:4rem;line-height:1;color:var(--orange);font-variant-numeric:tabular-nums}
+.sticker{position:absolute;z-index:3;top:46%;left:-52px;width:96px;height:96px;border-radius:50%;background:var(--orange);color:var(--brown);display:grid;place-items:center;text-align:center;font:800 .72rem/1.15 var(--font-display);text-transform:uppercase;transform:rotate(-12deg);box-shadow:0 10px 20px -8px rgba(0,0,0,.5);pointer-events:none}
+.game-note{margin-top:12px;font-size:.85rem;opacity:.7;text-align:center}
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:1fr;min-height:0}
+  .game{justify-self:center;max-width:460px}
+  .hero-sun{right:-40vw;top:auto;bottom:18%;width:110vw}
+  .sticker{display:none}
+}
+
+/* marquee */
+.marquee{background:var(--orange);color:var(--brown);overflow:hidden;border-block:2px solid var(--brown)}
+.marquee-track{display:flex;width:max-content;animation:marquee 32s linear infinite}
+.marquee-track span{font:800 clamp(1rem,1.8vw,1.35rem)/1 var(--font-display);text-transform:uppercase;padding:18px 0;white-space:nowrap;display:flex;align-items:center}
+.marquee-track span::after{content:"";width:.55em;height:.55em;border-radius:50%;background:var(--green);margin:0 1.1em}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ---------- ABOUT ---------- */
+.about{padding-block:clamp(80px,10vw,140px)}
+.about-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,90px);align-items:end;margin-bottom:clamp(48px,6vw,80px)}
+.about .eyebrow{color:var(--orange-ink);margin-bottom:22px}
+.about h2{font-size:clamp(2.4rem,5.6vw,4.6rem);font-weight:800;color:var(--green)}
+.about h2 em{font-style:normal;color:var(--orange)}
+.lead{font-size:clamp(1.15rem,1.7vw,1.35rem);line-height:1.55;max-width:46ch}
+.about-body{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(32px,6vw,90px);align-items:start}
+.seal-wrap{position:relative;aspect-ratio:1;max-width:460px;width:100%}
+.seal{position:absolute;inset:0;border-radius:50%;background:var(--green);display:grid;place-items:center;overflow:hidden}
+.seal-text{position:absolute;inset:0;animation:spin 40s linear infinite}
+.seal-text text{font:700 15px var(--font-body);letter-spacing:.32em;fill:var(--rice);text-transform:uppercase}
+@keyframes spin{to{transform:rotate(360deg)}}
+.seal-core{width:48%;aspect-ratio:1;border-radius:50%;background:var(--rice);display:grid;place-items:center}
+.seal-core span{font:800 clamp(3rem,7vw,5.4rem)/1 var(--font-display);color:var(--green)}
+.seal-core span i{display:inline-block;width:.22em;height:.22em;border-radius:50%;background:var(--orange);margin-left:.03em}
+.seal-badge{position:absolute;right:-4%;bottom:6%;background:var(--orange);color:var(--brown);border-radius:999px;padding:12px 18px;font:700 .82rem/1.2 var(--font-body);letter-spacing:.06em;transform:rotate(-6deg);box-shadow:0 12px 24px -12px rgba(52,20,10,.6);max-width:60%}
+.story{display:flex;flex-direction:column;gap:20px;min-width:0}
+.story p{max-width:60ch}
+.promises{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--line)}
+.promises li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+.promises li::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--orange);margin-top:8px}
+.promises h3{font-size:1.08rem;font-weight:700;color:var(--green);margin-bottom:4px;letter-spacing:0}
+.promises p{font-size:1rem;opacity:.85}
+.together{margin-top:30px;font-family:var(--font-display);font-weight:500;font-size:1.2rem;line-height:1.4;color:var(--green)}
+@media (max-width:860px){
+  .about-head,.about-body{grid-template-columns:1fr}
+  .seal-wrap{max-width:340px;margin-inline:auto}
+}
+
+/* ---------- MOCKUPS (product preview) ---------- */
+.mockups{background:var(--sand);padding-block:clamp(80px,10vw,140px)}
+.section-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,5vw,80px);align-items:end;margin-bottom:clamp(40px,5vw,64px)}
+.mockups .eyebrow{color:var(--orange-ink);margin-bottom:22px}
+.mockups h2{font-size:clamp(2.2rem,5vw,4.2rem);font-weight:800;color:var(--green)}
+.mockups .section-head p{font-size:1.1rem;max-width:40ch}
+.pv-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.pv{margin:0;min-width:0;position:relative}
+.pv button{all:unset;display:block;width:100%;height:100%;cursor:zoom-in;overflow:hidden;border-radius:8px;position:relative;background:var(--paper)}
+.pv button:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.pv img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.pv button:hover img{transform:scale(1.035)}
+.pv .cap{position:absolute;left:14px;bottom:14px;right:14px;display:flex}
+.pv .cap span{background:rgba(250,244,226,.94);color:var(--brown);font-size:.82rem;font-weight:700;padding:7px 13px;border-radius:999px;transform:translateY(6px);opacity:0;transition:opacity .25s ease,transform .25s ease}
+.pv button:hover .cap span,.pv button:focus-visible .cap span{opacity:1;transform:none}
+.pv-order{grid-column:1/-1}.pv-order button{aspect-ratio:2/1}
+.pv-order .cap span{opacity:1;transform:none}
+.pv-bag{grid-column:span 5;grid-row:span 2}
+.pv-pantry{grid-column:span 7}.pv-pantry button{aspect-ratio:2/1}
+.pv-details{grid-column:span 7;display:grid;grid-template-columns:1fr 1fr;gap:inherit}
+.pv-details .pv button{aspect-ratio:1/1}
+.pv-fresh{grid-column:span 7}.pv-fresh button{aspect-ratio:4/3}
+.pv-label{grid-column:span 5}
+.pv-note{margin-top:22px;font-size:.88rem;opacity:.72}
+@media (max-width:860px){.section-head{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .pv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pv-details{display:contents}
+  .pv-order{grid-column:1/-1}.pv-order button{aspect-ratio:3/2}
+  .pv-pantry,.pv-fresh{grid-column:1/-1;order:1}
+  .pv-pantry button{aspect-ratio:16/9}
+  .pv-bag{grid-column:span 1;grid-row:auto;order:2}.pv-bag button{aspect-ratio:3/4}
+  .pv-parcel{order:2}.pv-parcel button{aspect-ratio:3/4!important}
+  .pv-fresh{order:3}
+  .pv-logo,.pv-label{grid-column:span 1;order:4}.pv-label button{aspect-ratio:1/1}
+  .pv .cap span{opacity:1;transform:none;font-size:.74rem}
+}
+
+/* lightbox */
+.lightbox{border:0;padding:0;max-width:none;max-height:none;width:100%;height:100%;background:rgba(10,22,12,.94);color:var(--rice)}
+.lightbox::backdrop{background:rgba(10,22,12,.9)}
+.lb-inner{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.9rem;font-variant-numeric:tabular-nums;opacity:.85}
+.lb-stage{display:flex;align-items:center;justify-content:center;min-height:0;padding:12px 0}
+.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.lb-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.lb-bottom p{font-size:.95rem;min-width:0}
+.icon-btn{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--line-light);background:transparent;color:var(--rice);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.icon-btn:hover{border-color:var(--rice)}
+.icon-btn svg{width:22px;height:22px}
+.lb-nav{display:flex;gap:10px}
+
+/* ---------- CONTACT ---------- */
+.contact{background:var(--green);color:var(--rice);padding-block:clamp(80px,10vw,140px);position:relative;overflow:hidden;isolation:isolate}
+.contact::before{content:"";position:absolute;z-index:-1;left:-12vw;top:-30%;width:min(55vw,700px);aspect-ratio:1;border-radius:50%;border:2px dashed var(--line-light)}
+.contact .eyebrow{color:var(--rice);opacity:.85;margin-bottom:22px}
+.contact h2{font-size:clamp(2.4rem,6vw,5rem);font-weight:800;max-width:14ch}
+.contact .intro{margin-top:20px;font-size:1.15rem;opacity:.85;max-width:46ch}
+.phone-card{margin-top:clamp(40px,6vw,64px);background:var(--rice);color:var(--green);border-radius:18px;padding:clamp(24px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;position:relative;overflow:hidden}
+.phone-card::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:var(--orange);opacity:.95}
+.phone-label{font-weight:700;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange-ink);margin-bottom:12px}
+.phone-wrap{container-type:inline-size;min-width:0}
+.phone-number{font:800 min(7.6cqi,4.6rem)/1 var(--font-display);white-space:nowrap;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--green);text-decoration:none;display:inline-block;user-select:all;word-break:keep-all}
+.phone-number:hover{color:var(--green-soft)}
+.copy-btn{margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:6px 0;color:var(--brown);font:600 .92rem var(--font-body);cursor:pointer;opacity:.8}
+.copy-btn:hover{opacity:1;text-decoration:underline}
+.copy-btn svg{width:16px;height:16px}
+.contact-actions{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.contact-actions .btn{min-height:60px;padding:0 30px;font-size:1.05rem}
+.btn-green{background:var(--green);color:var(--rice)}
+.btn-green:hover{box-shadow:0 10px 24px -8px rgba(27,62,31,.6)}
+@media (max-width:760px){
+  .phone-card{grid-template-columns:1fr}
+  .phone-card::after{width:120px;height:120px;right:-50px;top:-50px}
+  .contact-actions .btn{width:100%}
+}
+
+/* ---------- FOOTER ---------- */
+.footer{background:var(--green-deep);color:var(--rice);padding-block:56px calc(40px + env(safe-area-inset-bottom,0px))}
+.foot-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr) minmax(0,1fr);gap:40px;align-items:start}
+.foot-brand img{height:56px;width:auto;margin-bottom:16px}
+.foot-brand p{opacity:.75;font-size:.95rem}
+.footer h3{font-family:var(--font-body);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:14px;font-weight:700}
+.footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.footer a{text-decoration:none;opacity:.88}
+.footer a:hover{opacity:1;text-decoration:underline;text-underline-offset:4px}
+.foot-bottom{margin-top:44px;padding-top:22px;border-top:1px solid var(--line-light);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:.85rem;opacity:.65}
+@media (max-width:760px){.foot-grid{grid-template-columns:1fr 1fr}.foot-brand{grid-column:1/-1}}
+
+/* ---------- FLOATING WHATSAPP ---------- */
+.wa-float{position:fixed;z-index:45;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:0;height:58px;min-width:58px;padding:0 17px;border-radius:999px;background:var(--wa);color:#0B2E14;text-decoration:none;font-weight:700;box-shadow:0 14px 30px -10px rgba(0,0,0,.45);transition:transform .25s ease,opacity .25s ease,gap .25s ease}
+.wa-float svg{width:24px;height:24px;flex:none}
+.wa-float .wa-text{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .3s ease}
+.wa-float:hover{transform:translateY(-3px)}
+@media (min-width:861px){.wa-float:hover,.wa-float:focus-visible{gap:10px}.wa-float:hover .wa-text,.wa-float:focus-visible .wa-text{max-width:140px}}
+@media (max-width:860px){.wa-float{height:54px;min-width:54px;padding:0 15px}body.game-active .wa-float{opacity:0;pointer-events:none;transform:scale(.8)}}
+
+/* reveal */
+.reveal{transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .9s ease}
+.reveal.pending{transform:translateY(28px);opacity:.35}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .reveal.pending{transform:none;opacity:1}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand-link" href="#top" aria-label="Bazar by clickfor.in, back to top"><img src="assets/brand/logo-light.png" width="852" height="332" alt="clickfor.in Bazar"></a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#mockups">Mockups</a>
+      <a href="#contact">Contact</a>
+      <a class="btn btn-orange" href="#contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Get in touch</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<!-- ===== 1. COMING SOON ===== -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="awning" aria-hidden="true"></div>
+  <div class="hero-sun" aria-hidden="true"></div>
+  <div class="hero-ring" aria-hidden="true"></div>
+  <div class="hero-dots" aria-hidden="true">
+    <span style="left:6%;top:22%;width:14px;height:14px"></span>
+    <span style="left:44%;top:14%;width:8px;height:8px;animation-delay:-3s"></span>
+    <span style="left:52%;top:82%;width:18px;height:18px;animation-delay:-5s"></span>
+    <span style="left:30%;top:90%;width:10px;height:10px;animation-delay:-1s"></span>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Bazar · by clickfor.in</p>
+      <h1 class="headline" id="hero-title" aria-label="Bazar is coming soon">
+        <span class="line"><span>Coming</span></span>
+        <span class="line"><span>Soon<i class="dot" aria-hidden="true"></i></span></span>
+      </h1>
+      <p class="tagline">Your online store for daily essentials.</p>
+      <p class="support">Something good is coming your way.</p>
+      <div class="hero-actions">
+        <a class="btn btn-orange" href="#contact">Stay Connected</a>
+        <a class="btn btn-ghost-light" href="#about">What is Bazar?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></a>
+      </div>
+    </div>
+
+    <div class="game" aria-labelledby="game-title">
+      <div class="sticker" aria-hidden="true">Play<br>while<br>you wait</div>
+      <div class="game-frame">
+        <div class="game-hud">
+          <span class="title" id="game-title">Catch the Essentials</span>
+          <span class="hud-stats">
+            <span>Score<b id="score">0</b></span>
+            <span class="lives" id="lives" aria-label="3 lives left"><i></i><i></i><i></i></span>
+          </span>
+        </div>
+        <div class="stage" id="stage">
+          <canvas id="gameCanvas" role="img" aria-label="Catch the Essentials game. Move the basket to catch falling everyday essentials."></canvas>
+          <div class="overlay" id="ovStart">
+            <h3>Catch the Essentials</h3>
+            <p>Move the basket and catch the everyday essentials as they fall. Miss three and it’s game over.</p>
+            <div class="keys"><kbd>←</kbd><kbd>→</kbd> on keyboard · drag on touch</div>
+            <button class="btn btn-orange" id="startBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>Start game</button>
+          </div>
+          <div class="overlay" id="ovPause" hidden>
+            <h3>Paused</h3>
+            <button class="btn btn-orange" id="resumeBtn" type="button">Resume</button>
+          </div>
+          <div class="overlay" id="ovOver" hidden>
+            <h3>Game over</h3>
+            <p>Final score</p>
+            <div class="final" id="finalScore">0</div>
+            <p id="bestLine">Best: 0</p>
+            <button class="btn btn-orange" id="againBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Play again</button>
+          </div>
+        </div>
+      </div>
+      <p class="game-note">Orange dots are worth 5 points. Press <kbd style="font:inherit;font-weight:700">P</kbd> to pause.</p>
+      <p class="sr-only" aria-live="polite" id="gameLive"></p>
+    </div>
+  </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Coming soon</span><span>Daily essentials</span><span>clickfor.in</span><span>Bazar</span><span>Stay connected</span>
+      <span>Coming soon</span><span>Daily essentials</span><span>clickfor.in</span><span>Bazar</span><span>Stay connected</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. ABOUT ===== -->
+<section class="about" id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <div class="about-head reveal">
+      <div>
+        <p class="eyebrow">About Bazar</p>
+        <h2 id="about-title">Everyday Essentials, Made <em>Easier.</em></h2>
+      </div>
+      <p class="lead">Bazar is a new online store from clickfor.in for the things you use every day. We’re getting ready to open, and we’re building it carefully, one product at a time.</p>
+    </div>
+    <div class="about-body">
+      <div class="seal-wrap reveal" aria-hidden="true">
+        <div class="seal">
+          <svg class="seal-text" viewBox="0 0 400 400">
+            <defs><path id="circ" d="M200 200 m-160 0 a160 160 0 1 1 320 0 a160 160 0 1 1 -320 0"/></defs>
+            <text><textPath href="#circ">Checked · Tested · Then listed · Checked · Tested · Then listed ·</textPath></text>
+          </svg>
+          <div class="seal-core"><span>B<i></i></span></div>
+        </div>
+        <div class="seal-badge">Built together, one product at a time</div>
+      </div>
+      <div class="story reveal">
+        <p>Bazar is being built by a group of people who share one goal. Everyone in the team looks for new products and suppliers, compares prices and tries samples. A product joins the Bazar list only after it has been checked and we are sure it is worth it.</p>
+        <p>Our first range is still taking shape, with a soft spot for traditional Kerala favourites. We’ll keep adding what works and leave out what doesn’t.</p>
+        <ul class="promises">
+          <li><div><h3>Good quality, fair prices</h3><p>We look for products that are good and priced fairly.</p></div></li>
+          <li><div><h3>Made to last</h3><p>We choose items with a good shelf life, so they stay fresh in your kitchen.</p></div></li>
+          <li><div><h3>Packed to travel well</h3><p>We pick products that store and travel safely, so less gets damaged along the way.</p></div></li>
+          <li><div><h3>Worth buying again</h3><p>We want Bazar to be full of things you’ll come back for.</p></div></li>
+          <li><div><h3>More convenient</h3><p>Where newer, smarter products make life easier, we want to bring them to you.</p></div></li>
+        </ul>
+        <p class="together">With everyone’s help and support, we’ll grow together.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. BRAND MOCKUPS ===== -->
+<section class="mockups" id="mockups" aria-labelledby="mockups-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <p class="eyebrow">A first look</p>
+        <h2 id="mockups-title">A Little Preview of Bazar</h2>
+      </div>
+      <p>Everyday essentials, thoughtfully packed. Here’s a glimpse of what your Bazar experience could look like.</p>
+    </div>
+    <div class="pv-grid reveal">
+      <figure class="pv pv-order" data-lb="preview"><button type="button"><img src="assets/img/order.webp" srcset="assets/img/order-sm.webp 800w, assets/img/order.webp 1600w" sizes="(max-width:760px) 92vw, 1200px" width="1600" height="800" loading="lazy" decoding="async" alt="Concept of a complete Bazar order on a kitchen table: a kraft Bazar bag filled with leafy greens, bananas, carrots and tomatoes, beside rice, flour, a crate of tomatoes and onions, oil, spice jars, snacks and a wrapped parcel"><span class="cap"><span>A complete Bazar order</span></span></button></figure>
+      <figure class="pv pv-bag" data-lb="preview"><button type="button"><img src="assets/img/bag.webp" srcset="assets/img/bag-sm.webp 800w, assets/img/bag.webp 1200w" sizes="(max-width:760px) 46vw, 40vw" width="1200" height="1500" loading="lazy" decoding="async" alt="Concept of a kraft Bazar shopping bag filled with spinach, coriander, bananas, carrots, tomatoes and a pouch of lentils"><span class="cap"><span>Your Bazar bag</span></span></button></figure>
+      <figure class="pv pv-pantry" data-lb="preview"><button type="button"><img src="assets/img/pantry.webp" srcset="assets/img/pantry-sm.webp 800w, assets/img/pantry.webp 1600w" sizes="(max-width:760px) 92vw, 56vw" width="1600" height="800" loading="lazy" decoding="async" alt="Concept pantry essentials in kraft and cotton packaging: rice, wheat flour, lentils, grains, chilli, turmeric and coriander jars, oil, snacks and jaggery"><span class="cap"><span>Pantry essentials</span></span></button></figure>
+      <div class="pv-details">
+        <figure class="pv pv-logo" data-lb="preview"><button type="button"><img src="assets/img/detail-bag.webp" srcset="assets/img/detail-bag-sm.webp 800w, assets/img/detail-bag.webp 1200w" sizes="(max-width:760px) 46vw, 28vw" width="1200" height="1200" loading="lazy" decoding="async" alt="Close-up of the Bazar logo printed on kraft paper with greens peeking over the bag edge"><span class="cap"><span>Printed kraft bag</span></span></button></figure>
+        <figure class="pv pv-parcel" data-lb="preview"><button type="button"><img src="assets/img/detail-parcel.webp" srcset="assets/img/detail-parcel-sm.webp 800w, assets/img/detail-parcel.webp 1200w" sizes="(max-width:760px) 46vw, 28vw" width="1200" height="1200" loading="lazy" decoding="async" alt="Top-down view of a kraft paper parcel tied with green twine and sealed with an orange Packed with care sticker"><span class="cap"><span>Wrapped with care</span></span></button></figure>
+      </div>
+      <figure class="pv pv-fresh" data-lb="preview"><button type="button"><img src="assets/img/fresh.webp" srcset="assets/img/fresh-sm.webp 800w, assets/img/fresh.webp 1600w" sizes="(max-width:760px) 92vw, 56vw" width="1600" height="1200" loading="lazy" decoding="async" alt="Concept of fresh produce packed in a green Bazar bag, with a paper tray of tomatoes, onions and potatoes, bananas and a coconut"><span class="cap"><span>Fresh essentials</span></span></button></figure>
+      <figure class="pv pv-label" data-lb="preview"><button type="button"><img src="assets/img/detail-label.webp" srcset="assets/img/detail-label-sm.webp 800w, assets/img/detail-label.webp 1200w" sizes="(max-width:760px) 46vw, 40vw" width="1200" height="1200" loading="lazy" decoding="async" alt="Close-up of kraft labels on a turmeric jar and a lentils pouch with a window"><span class="cap"><span>Labels and textures</span></span></button></figure>
+    </div>
+    <p class="pv-note">Concept visuals for illustration. Products and packaging shown are not final.</p>
+  </div>
+</section>
+
+<!-- ===== 5. CONTACT ===== -->
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Contact</p>
+      <h2 id="contact-title">Let’s Stay Connected</h2>
+      <p class="intro">Have a question or want to know more about Bazar? We’d love to hear from you.</p>
+    </div>
+    <div class="phone-card reveal">
+      <div class="phone-wrap">
+        <p class="phone-label">Phone &amp; WhatsApp</p>
+        <a class="phone-number" href="tel:+918086777790" aria-label="Call +91 8086 7777 90">+91 8086 7777 90</a>
+        <div><button class="copy-btn" id="copyBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copyText">Copy number</span></button></div>
+      </div>
+      <div class="contact-actions">
+        <a class="btn btn-green" href="tel:+918086777790">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Us</a>
+        <a class="btn btn-wa" href="https://wa.me/message/TOTXU35IP3ANE1" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.6 8.6 0 1 1 8 19.4z"/><path d="M9 8.6c0 3.3 2.9 6.3 6.3 6.4l1-1.3-1.8-1-1 .8a5 5 0 0 1-2.4-2.4l.8-1-1-1.8z" fill="currentColor" stroke-width="1"/></svg>
+          Chat on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" aria-label="Back to top"><img src="assets/brand/logo-light.png" width="852" height="332" alt="clickfor.in Bazar" loading="lazy"></a>
+        <p>clickfor.in · Your online store for daily essentials.</p>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <ul><li><a href="#about">About</a></li><li><a href="#mockups">Mockups</a></li><li><a href="#contact">Contact</a></li></ul>
+      </div>
+      <div>
+        <h3>Talk to us</h3>
+        <ul><li><a href="tel:+918086777790">+91 8086 7777 90</a></li><li><a href="https://wa.me/message/TOTXU35IP3ANE1" target="_blank" rel="noopener noreferrer">WhatsApp</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© <span id="year">2026</span> clickfor.in. All rights reserved.</span><span>Bazar · Coming soon</span></div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/message/TOTXU35IP3ANE1" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.6 8.6 0 1 1 8 19.4z"/><path d="M9 8.6c0 3.3 2.9 6.3 6.3 6.4l1-1.3-1.8-1-1 .8a5 5 0 0 1-2.4-2.4l.8-1-1-1.8z" fill="currentColor" stroke-width="1"/></svg>
+  <span class="wa-text">Chat with us</span>
+</a>
+
+<dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+  <div class="lb-inner">
+    <div class="lb-top"><span id="lbCount">1 / 1</span>
+      <button class="icon-btn" id="lbClose" type="button" aria-label="Close image viewer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="lb-stage"><img id="lbImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt=""></div>
+    <div class="lb-bottom"><p id="lbCap"></p>
+      <div class="lb-nav">
+        <button class="icon-btn" id="lbPrev" type="button" aria-label="Previous image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button class="icon-btn" id="lbNext" type="button" aria-label="Next image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div></div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- year ---------- */
+  $("#year").textContent = new Date().getFullYear();
+
+  /* ---------- nav ---------- */
+  const nav = $("#nav"), menuBtn = $("#menuBtn"), links = $("#navLinks");
+  const setMenu = (open) => {
+    links.classList.toggle("open", open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    menuBtn.innerHTML = open
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+  };
+  menuBtn.addEventListener("click", () => setMenu(!links.classList.contains("open")));
+  $$("a", links).forEach(a => a.addEventListener("click", () => setMenu(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && links.classList.contains("open")) { setMenu(false); menuBtn.focus(); } });
+  addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), { passive: true });
+
+  // active section highlight
+  const navMap = new Map($$(".nav-links a[href^='#']:not(.btn)").map(a => [a.getAttribute("href").slice(1), a]));
+  if ("IntersectionObserver" in window) {
+    const so = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { navMap.forEach(a => a.classList.remove("active")); const a = navMap.get(en.target.id); if (a) a.classList.add("active"); } });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    $$("main section[id]").forEach(s => so.observe(s));
+  }
+
+  /* ---------- reveal (visible at rest; only below-fold items get a gentle lift) ---------- */
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const ro = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.remove("pending"); ro.unobserve(en.target); } });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    $$(".reveal").forEach(el => {
+      if (el.getBoundingClientRect().top > innerHeight) { el.classList.add("pending"); ro.observe(el); }
+    });
+  }
+
+  /* ---------- copy number ---------- */
+  const copyBtn = $("#copyBtn"), copyText = $("#copyText");
+  copyBtn.addEventListener("click", () => {
+    const num = "+91 8086 7777 90";
+    const done = (msg) => { copyText.textContent = msg; setTimeout(() => copyText.textContent = "Copy number", 2000); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($(".phone-number")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); done("Selected, press copy"); };
+    try { navigator.clipboard.writeText(num).then(() => done("Copied"), fallback); } catch (e) { fallback(); }
+  });
+
+  /* ---------- lightbox ---------- */
+  const dlg = $("#lightbox"), lbImg = $("#lbImg"), lbCap = $("#lbCap"), lbCount = $("#lbCount");
+  let lbSet = [], lbIdx = 0, lbReturn = null;
+  const largeSrc = (img) => { const ss = img.getAttribute("srcset"); if (!ss) return img.currentSrc || img.src; const parts = ss.split(",").map(s => s.trim().split(/\s+/)); return parts[parts.length - 1][0]; };
+  const showLb = () => {
+    const fig = lbSet[lbIdx], img = $("img", fig);
+    lbImg.src = largeSrc(img); lbImg.alt = img.alt;
+    const cap = $("figcaption", fig) || $(".cap span", fig);
+    lbCap.textContent = (cap ? cap.textContent + " — " : "") + "Concept visual";
+    lbCount.textContent = (lbIdx + 1) + " / " + lbSet.length;
+  };
+  const openLb = (fig) => {
+    lbSet = $$(`[data-lb="${fig.dataset.lb}"]`); lbIdx = lbSet.indexOf(fig); lbReturn = $("button", fig);
+    showLb();
+    if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+    document.documentElement.style.overflow = "hidden";
+  };
+  const closeLb = () => { if (dlg.open) dlg.close(); };
+  dlg.addEventListener("close", () => { document.documentElement.style.overflow = ""; if (lbReturn) lbReturn.focus(); });
+  $$("[data-lb]").forEach(fig => $("button", fig).addEventListener("click", () => openLb(fig)));
+  $("#lbClose").addEventListener("click", closeLb);
+  $("#lbPrev").addEventListener("click", () => { lbIdx = (lbIdx - 1 + lbSet.length) % lbSet.length; showLb(); });
+  $("#lbNext").addEventListener("click", () => { lbIdx = (lbIdx + 1) % lbSet.length; showLb(); });
+  dlg.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft") $("#lbPrev").click();
+    if (e.key === "ArrowRight") $("#lbNext").click();
+  });
+  dlg.addEventListener("click", e => { if (e.target === dlg || e.target.classList.contains("lb-stage")) closeLb(); });
+  let tx = null;
+  dlg.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+  dlg.addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) (dx > 0 ? $("#lbPrev") : $("#lbNext")).click(); tx = null; });
+
+  /* ================= GAME: Catch the Essentials ================= */
+  const stage = $("#stage"), cv = $("#gameCanvas"), ctx = cv.getContext("2d");
+  const ui = { score: $("#score"), lives: $("#lives"), start: $("#ovStart"), pause: $("#ovPause"), over: $("#ovOver"), final: $("#finalScore"), best: $("#bestLine"), live: $("#gameLive") };
+  const C = { green: "#1B3E1F", deep: "#122915", soft: "#24502A", orange: "#E4762C", brown: "#34140A", rice: "#FAF4E2", kraft: "#C9A074" };
+  let W = 0, H = 0, dpr = 1, unit = 1;
+  const g = { state: "idle", score: 0, lives: 3, best: 0, items: [], pops: [], t: 0, spawn: 0, basket: { x: 0, vx: 0, target: null }, keys: { l: false, r: false }, flash: 0 };
+  try { g.best = parseInt(localStorage.getItem("bazar-best") || "0", 10) || 0; } catch (e) {}
+
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; unit = W / 400;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!g.basket.x) g.basket.x = W / 2;
+    g.basket.x = Math.min(Math.max(g.basket.x, bw() / 2), W - bw() / 2);
+    if (g.state !== "playing") draw();
+  }
+  const bw = () => 96 * unit, bh = () => 52 * unit, by = () => H - 22 * unit - bh();
+
+  /* item art */
+  const TYPES = ["bottle", "jar", "packet", "chilli", "garlic", "coconut", "soap"];
+  const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); };
+  function drawItem(type, s) {
+    ctx.lineWidth = 2 * unit; ctx.strokeStyle = "rgba(18,41,21,.55)";
+    switch (type) {
+      case "bottle":
+        rr(-s * .32, -s * .5, s * .64, s * 1.05, s * .18); ctx.fillStyle = "#F3D98A"; ctx.fill(); ctx.stroke();
+        rr(-s * .16, -s * .78, s * .32, s * .3, s * .06); ctx.fillStyle = C.green; ctx.fill(); ctx.stroke();
+        rr(-s * .32, -s * .12, s * .64, s * .36, 2); ctx.fillStyle = C.orange; ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.55)"; rr(-s * .22, -s * .42, s * .08, s * .7, 3); ctx.fill(); break;
+      case "jar":
+        rr(-s * .5, -s * .36, s, s * .86, s * .2); ctx.fillStyle = "#F6C65B"; ctx.fill(); ctx.stroke();
+        rr(-s * .44, -s * .62, s * .88, s * .3, s * .08); ctx.fillStyle = C.green; ctx.fill(); ctx.stroke();
+        rr(-s * .5, -s * .1, s, s * .32, 2); ctx.fillStyle = C.rice; ctx.fill();
+        ctx.fillStyle = C.orange; ctx.beginPath(); ctx.arc(0, s * .06, s * .08, 0, 7); ctx.fill(); break;
+      case "packet":
+        ctx.beginPath(); ctx.moveTo(-s * .46, -s * .6); ctx.lineTo(s * .46, -s * .6); ctx.lineTo(s * .38, s * .6); ctx.lineTo(-s * .38, s * .6); ctx.closePath();
+        ctx.fillStyle = C.kraft; ctx.fill(); ctx.stroke();
+        ctx.fillStyle = C.orange; ctx.fillRect(-s * .42, -s * .12, s * .84, s * .26);
+        ctx.fillStyle = "rgba(52,20,10,.35)"; for (let i = -4; i <= 4; i++) ctx.fillRect(i * s * .1 - 1, -s * .6, 2, s * .08); break;
+      case "chilli":
+        ctx.beginPath(); ctx.moveTo(-s * .2, -s * .5);
+        ctx.bezierCurveTo(s * .55, -s * .4, s * .45, s * .4, -s * .15, s * .62);
+        ctx.bezierCurveTo(s * .2, s * .2, s * .1, -s * .2, -s * .38, -s * .32); ctx.closePath();
+        ctx.fillStyle = "#D7362A"; ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = "#3E7A3A"; ctx.lineWidth = 4 * unit; ctx.beginPath(); ctx.moveTo(-s * .3, -s * .45); ctx.quadraticCurveTo(-s * .38, -s * .7, -s * .15, -s * .78); ctx.stroke(); break;
+      case "garlic":
+        ctx.beginPath(); ctx.moveTo(0, -s * .62); ctx.bezierCurveTo(s * .2, -s * .3, s * .62, -s * .15, s * .5, s * .25);
+        ctx.bezierCurveTo(s * .4, s * .58, -s * .4, s * .58, -s * .5, s * .25); ctx.bezierCurveTo(-s * .62, -s * .15, -s * .2, -s * .3, 0, -s * .62);
+        ctx.fillStyle = "#F7F0E1"; ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = "rgba(160,120,140,.6)"; ctx.lineWidth = 1.6 * unit;
+        [-.22, 0, .22].forEach(k => { ctx.beginPath(); ctx.moveTo(k * s * .4, -s * .35); ctx.quadraticCurveTo(k * s * 1.4, s * .1, k * s, s * .5); ctx.stroke(); }); break;
+      case "coconut":
+        ctx.beginPath(); ctx.arc(0, 0, s * .55, 0, 7); ctx.fillStyle = "#6B4024"; ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = "rgba(255,230,190,.25)"; ctx.lineWidth = 1.5 * unit;
+        for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(0, 0, s * (.2 + i * .07), -2.4 + i * .3, -1.2 + i * .3); ctx.stroke(); }
+        ctx.fillStyle = "#2E1A0C"; [[-.14, -.2], [.12, -.22], [0, -.02]].forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x * s, y * s, s * .07, 0, 7); ctx.fill(); }); break;
+      case "soap":
+        rr(-s * .55, -s * .34, s * 1.1, s * .68, s * .22); ctx.fillStyle = "#A9D8B8"; ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.75)"; [[.3, -.42, .14], [.5, -.62, .09], [.12, -.6, .07]].forEach(([x, y, r]) => { ctx.beginPath(); ctx.arc(x * s, y * s, r * s, 0, 7); ctx.fill(); });
+        ctx.fillStyle = "rgba(27,62,31,.45)"; rr(-s * .3, -s * .06, s * .6, s * .12, 4); ctx.fill(); break;
+      case "dot":
+        ctx.fillStyle = "rgba(228,118,44,.25)"; ctx.beginPath(); ctx.arc(0, 0, s * .8, 0, 7); ctx.fill();
+        ctx.fillStyle = C.orange; ctx.beginPath(); ctx.arc(0, 0, s * .5, 0, 7); ctx.fill();
+        ctx.fillStyle = C.rice; ctx.font = `800 ${Math.round(s * .42)}px Unbounded, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("+5", 0, s * .02); break;
+    }
+  }
+  function drawBasket(x) {
+    const w = bw(), h = bh(), y = by();
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "rgba(0,0,0,.22)"; ctx.beginPath(); ctx.ellipse(0, h + 10 * unit, w * .48, 7 * unit, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-w / 2, 0); ctx.lineTo(w / 2, 0); ctx.lineTo(w * .38, h); ctx.lineTo(-w * .38, h); ctx.closePath();
+    ctx.fillStyle = C.kraft; ctx.fill();
+    ctx.save(); ctx.clip(); ctx.strokeStyle = "rgba(90,55,25,.35)"; ctx.lineWidth = 2 * unit;
+    for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(-w / 2, i * h / 4); ctx.lineTo(w / 2, i * h / 4); ctx.stroke(); }
+    for (let i = -6; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(i * w / 12, 0); ctx.lineTo(i * w / 12 * .76, h); ctx.stroke(); }
+    ctx.restore();
+    rr(-w / 2 - 4 * unit, -6 * unit, w + 8 * unit, 12 * unit, 6 * unit); ctx.fillStyle = C.green; ctx.fill();
+    ctx.fillStyle = C.orange; ctx.beginPath(); ctx.arc(0, h * .55, 7 * unit, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+  function drawBg() {
+    ctx.fillStyle = C.soft; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(250,244,226,.06)";
+    const step = 28 * unit;
+    for (let y = step / 2; y < H; y += step) for (let x = ((y / step) % 2 ? step : step / 2); x < W; x += step) { ctx.beginPath(); ctx.arc(x, y, 1.6 * unit, 0, 7); ctx.fill(); }
+    // shelf floor
+    ctx.fillStyle = C.green; ctx.fillRect(0, H - 22 * unit, W, 22 * unit);
+    ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(0, H - 22 * unit, W, 3 * unit);
+    if (g.flash > 0) { ctx.fillStyle = `rgba(215,54,42,${g.flash * .35})`; ctx.fillRect(0, 0, W, H); }
+  }
+  function draw() {
+    if (!W) return;
+    drawBg();
+    if (g.state === "idle") {
+      // still life of a few essentials
+      const demo = [["bottle", .2, .26, -.2], ["coconut", .5, .18, 0], ["chilli", .78, .3, .4], ["packet", .32, .5, .15], ["garlic", .68, .52, -.1], ["dot", .5, .38, 0]];
+      demo.forEach(([t, x, y, a]) => { ctx.save(); ctx.translate(x * W, y * H); ctx.rotate(a); drawItem(t, 30 * unit); ctx.restore(); });
+    }
+    g.items.forEach(it => { ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(it.a); drawItem(it.type, it.s); ctx.restore(); });
+    drawBasket(g.basket.x);
+    g.pops.forEach(p => { ctx.globalAlpha = Math.max(p.life, 0); ctx.fillStyle = p.bonus ? C.orange : C.rice; ctx.font = `800 ${Math.round(18 * unit)}px Unbounded, sans-serif`; ctx.textAlign = "center"; ctx.fillText(p.text, p.x, p.y); ctx.globalAlpha = 1; });
+  }
+
+  function updateHud() {
+    ui.score.textContent = g.score;
+    $$("i", ui.lives).forEach((el, i) => el.classList.toggle("lost", i >= g.lives));
+    ui.lives.setAttribute("aria-label", g.lives + (g.lives === 1 ? " life left" : " lives left"));
+  }
+  function spawn() {
+    const bonus = Math.random() < .08;
+    const s = (bonus ? 26 : 30) * unit;
+    const lvl = Math.min(g.score / 40, 1);
+    g.items.push({
+      type: bonus ? "dot" : TYPES[(Math.random() * TYPES.length) | 0], bonus,
+      x: s + Math.random() * (W - 2 * s), y: -s, s,
+      vy: (120 + 230 * lvl + Math.random() * 50) * unit * (H / (W * 1.25)),
+      a: Math.random() * 6, va: (Math.random() - .5) * 2.4
+    });
+  }
+  let last = 0, raf = 0;
+  function loop(ts) {
+    if (g.state !== "playing") return;
+    const dt = Math.min((ts - last) / 1000 || 0, .05); last = ts; g.t += dt;
+    // basket
+    const speed = 560 * unit;
+    if (g.keys.l || g.keys.r) { g.basket.target = null; g.basket.x += (g.keys.r - g.keys.l) * speed * dt; }
+    else if (g.basket.target != null) g.basket.x += (g.basket.target - g.basket.x) * Math.min(1, dt * 18);
+    g.basket.x = Math.min(Math.max(g.basket.x, bw() / 2), W - bw() / 2);
+    // spawn
+    g.spawn -= dt;
+    if (g.spawn <= 0) { spawn(); g.spawn = Math.max(.42, 1.05 - g.score * .012) * (0.75 + Math.random() * .5); }
+    // items
+    const top = by(), half = bw() / 2;
+    for (let i = g.items.length - 1; i >= 0; i--) {
+      const it = g.items[i]; it.y += it.vy * dt; it.a += it.va * dt;
+      if (it.y + it.s * .4 >= top && it.y - it.s * .4 <= top + 18 * unit && Math.abs(it.x - g.basket.x) < half + it.s * .2) {
+        const pts = it.bonus ? 5 : 1; g.score += pts; updateHud();
+        g.pops.push({ x: it.x, y: top - 10 * unit, text: "+" + pts, life: 1, bonus: it.bonus });
+        g.items.splice(i, 1); continue;
+      }
+      if (it.y - it.s > H) {
+        g.items.splice(i, 1);
+        if (!it.bonus) { g.lives--; g.flash = 1; updateHud(); if (g.lives <= 0) return gameOver(); }
+      }
+    }
+    g.pops.forEach(p => { p.y -= 40 * unit * dt; p.life -= dt * 1.4; });
+    g.pops = g.pops.filter(p => p.life > 0);
+    g.flash = Math.max(0, g.flash - dt * 3);
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+  function show(el) { [ui.start, ui.pause, ui.over].forEach(o => o.hidden = o !== el); }
+  function setActive(on) { stage.classList.toggle("playing", on); document.body.classList.toggle("game-active", on); }
+  function start() {
+    Object.assign(g, { state: "playing", score: 0, lives: 3, items: [], pops: [], t: 0, spawn: .4, flash: 0 });
+    g.basket.x = W / 2; g.basket.target = null; updateHud(); show(null); setActive(true);
+    ui.live.textContent = "Game started.";
+    cv.focus({ preventScroll: true });
+    last = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+  }
+  function pause() { if (g.state !== "playing") return; g.state = "paused"; cancelAnimationFrame(raf); show(ui.pause); setActive(false); $("#resumeBtn").focus({ preventScroll: true }); }
+  function resume() { if (g.state !== "paused") return; g.state = "playing"; show(null); setActive(true); last = performance.now(); raf = requestAnimationFrame(loop); }
+  function gameOver() {
+    g.state = "over"; cancelAnimationFrame(raf); setActive(false);
+    if (g.score > g.best) { g.best = g.score; try { localStorage.setItem("bazar-best", String(g.best)); } catch (e) {} }
+    ui.final.textContent = g.score; ui.best.textContent = "Best: " + g.best;
+    show(ui.over); draw();
+    ui.live.textContent = "Game over. Final score " + g.score + ".";
+    $("#againBtn").focus({ preventScroll: true });
+  }
+  $("#startBtn").addEventListener("click", start);
+  $("#againBtn").addEventListener("click", start);
+  $("#resumeBtn").addEventListener("click", resume);
+
+  // keyboard: only intercept while playing
+  addEventListener("keydown", e => {
+    if (g.state !== "playing") return;
+    const k = e.key;
+    if (k === "ArrowLeft" || k === "a" || k === "A") { g.keys.l = true; e.preventDefault(); }
+    else if (k === "ArrowRight" || k === "d" || k === "D") { g.keys.r = true; e.preventDefault(); }
+    else if (k === "p" || k === "P" || k === "Escape") { e.preventDefault(); pause(); }
+  });
+  addEventListener("keyup", e => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") g.keys.l = false;
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") g.keys.r = false;
+  });
+  // pointer / touch drag
+  const toX = e => { const r = cv.getBoundingClientRect(); return e.clientX - r.left; };
+  cv.addEventListener("pointerdown", e => { if (g.state !== "playing") return; g.basket.target = toX(e); cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener("pointermove", e => { if (g.state !== "playing") return; if (e.pointerType === "mouse" || e.buttons) g.basket.target = toX(e); });
+
+  // auto-pause when hidden or scrolled away
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
+  if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => { if (!en.isIntersecting) pause(); }, { threshold: .25 }).observe(stage);
+
+  if ("ResizeObserver" in window) new ResizeObserver(resize).observe(stage); else addEventListener("resize", resize);
+  resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (g.state !== "playing") draw(); });
+})();
+</script>
+</body>
+</html>
