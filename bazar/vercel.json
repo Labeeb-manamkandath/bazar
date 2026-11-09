@@ -4,9 +4,9 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/products/:slug", "destination": "/api/product-page?slug=:slug" },
-    { "source": "/category/:slug", "destination": "/products.html" },
-    { "source": "/delivery-policy", "destination": "/policy.html" },
-    { "source": "/refund-policy", "destination": "/policy.html" },
+    { "source": "/category/:slug", "destination": "/products" },
+    { "source": "/delivery-policy", "destination": "/policy" },
+    { "source": "/refund-policy", "destination": "/policy" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
