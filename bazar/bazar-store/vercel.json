@@ -1,0 +1,30 @@
+{
+  "cleanUrls": true,
+  "regions": ["bom1"],
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/products/:slug", "destination": "/api/product-page?slug=:slug" },
+    { "source": "/category/:slug", "destination": "/products.html" },
+    { "source": "/delivery-policy", "destination": "/policy.html" },
+    { "source": "/refund-policy", "destination": "/policy.html" },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
+  ],
+  "functions": {
+    "api/product-page.js": { "includeFiles": "product.html" }
+  },
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+      { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+    ]},
+    { "source": "/admin", "headers": [
+      { "key": "Cache-Control", "value": "no-store" },
+      { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+    ]},
+    { "source": "/assets/(.*)", "headers": [
+      { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }
+    ]}
+  ]
+}
