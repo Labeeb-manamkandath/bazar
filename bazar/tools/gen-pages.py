@@ -215,6 +215,7 @@ product = head(None, '', '/products') + '''<main id="main">
 </main>
 ''' + foot('<script src="/assets/js/product.js"></script>\n')
 write('product.html', product)
+import shutil; shutil.copy('product.html','api/_seed/product.html')
 
 # ---------------- ABOUT ----------------
 about = head('About Bazar | Bazar by clickfor.in',

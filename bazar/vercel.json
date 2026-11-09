@@ -11,7 +11,7 @@
     { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
   "functions": {
-    "api/product-page.js": { "includeFiles": "product.html" },
+    "api/product-page.js": { "includeFiles": "{product.html,api/_seed/product.html}" },
     "api/admin.js": { "includeFiles": "api/_seed/**" }
   },
   "headers": [

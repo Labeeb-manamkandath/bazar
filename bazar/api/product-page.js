@@ -10,7 +10,14 @@ const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g,
 
 module.exports = async function handler(req, res) {
   const q = req.query || Object.fromEntries(new URL(req.url, 'http://x').searchParams);
-  let html = fs.readFileSync(path.join(process.cwd(), 'product.html'), 'utf8');
+  // Template copy lives next to this function so it is always bundled on Vercel.
+  let html = '';
+  for (const f of [path.join(__dirname, '_seed', 'product.html'), path.join(process.cwd(), 'product.html')]) {
+    try { html = fs.readFileSync(f, 'utf8'); break; } catch (e) { /* try next */ }
+  }
+  if (!html) {
+    res.statusCode = 302; res.setHeader('Location', '/products'); return res.end();
+  }
   let status = 200, seo = '';
   try {
     const c = db.configured() ? await catalog() : { products: [] };
