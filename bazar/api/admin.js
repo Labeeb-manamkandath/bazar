@@ -2,6 +2,8 @@
 const db = require('./_lib/db');
 const auth = require('./_lib/auth');
 const U = require('./_lib/util');
+const fs = require('fs');
+const path = require('path');
 
 const GUARDED_POST_HEADER = 'x-requested-with';
 
@@ -67,6 +69,43 @@ module.exports = async function handler(req, res) {
         policies[k] = s || { draft: U.DEFAULT_POLICIES[k], published: U.DEFAULT_POLICIES[k], published_at: null, is_default: true };
       });
       return ok(res, { categories, products, home: { ...U.DEFAULT_HOME, ...(settings.home || {}), hero: { ...U.DEFAULT_HOME.hero, ...((settings.home || {}).hero || {}) } }, policies, user: session.u });
+    }
+
+    /* ---------- one-time starter import (categories, products, photos) ---------- */
+    if (action === 'import.starter' && isPost) {
+      const seed = JSON.parse(fs.readFileSync(path.join(__dirname, '_seed', 'starter.json'), 'utf8'));
+      const cats = await db.all('categories');
+      const byName = {};
+      cats.forEach(c => { byName[c.name.toLowerCase()] = c; });
+      let maxSort = cats.reduce((m, c) => Math.max(m, c.sort || 0), 0);
+      let addedC = 0, addedP = 0, skipped = 0;
+      for (const name of seed.categories) {
+        if (byName[name.toLowerCase()]) continue;
+        maxSort += 1;
+        byName[name.toLowerCase()] = await db.insert('categories', { name, description: '', image_url: '', active: true, slug: await uniqueSlug('categories', U.slugify(name)), sort: maxSort });
+        addedC += 1;
+      }
+      const existing = await db.all('products');
+      const popularIds = [];
+      for (const p of seed.products) {
+        const old = existing.find(x => x.name.toLowerCase() === p.name.toLowerCase());
+        if (old) { skipped += 1; continue; }
+        const buf = fs.readFileSync(path.join(__dirname, '_seed', p.img + '.webp'));
+        const url = await db.uploadImage(buf, 'image/webp', p.img);
+        const cat = byName[p.cat.toLowerCase()];
+        const { errors, value } = U.cleanProduct({ name: p.name, category_id: cat.id, price: p.price, price_unit: '', quantity_value: p.qv, quantity_unit: p.qu, description: p.desc, images: [url], wa_link: p.wa, status: 'active', in_stock: true, featured: false, popular: !!p.popular });
+        if (Object.keys(errors).length) return fail(res, 500, 'Import data problem: ' + JSON.stringify(errors));
+        const saved = await db.insert('products', { ...value, slug: await uniqueSlug('products', U.slugify(value.name)) });
+        if (p.popular) popularIds.push(saved.id);
+        addedP += 1;
+      }
+      if (popularIds.length) {
+        const home = (await db.getSetting('home')) || {};
+        const ids = Array.isArray(home.popular_ids) ? home.popular_ids.slice() : [];
+        popularIds.forEach(i => { if (!ids.includes(i)) ids.push(i); });
+        await db.setSetting('home', { ...home, popular_ids: ids });
+      }
+      return ok(res, { added_categories: addedC, added_products: addedP, skipped });
     }
 
     /* ---------- products ---------- */

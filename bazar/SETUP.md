@@ -3,7 +3,7 @@
 ## 1. Supabase (database and photos)
 1. Go to supabase.com, sign up, click **New project**. Name it `bazar`. Region: **Mumbai (ap-south-1)**. Save the database password.
 2. Open **SQL Editor > New query**. Paste everything from `db/schema.sql`. Click **Run**.
-3. Open **Project Settings > API**. Copy the **Project URL** and the **service_role** key (click Reveal). Keep the service_role key private.
+3. Open **Project Settings > API**. Copy the **Secret key** (click the copy icon next to it). The Project URL is under **Settings > Data API**. Keep the secret key private.
 
 ## 2. Vercel settings
 Vercel > your project > **Settings > Environment Variables**. Add the five variables from `vercel-env-values.txt`, plus the two Supabase values from step 1. Apply to all environments.

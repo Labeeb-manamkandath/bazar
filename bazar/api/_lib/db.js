@@ -22,7 +22,8 @@ async function sb(pathname, opts = {}) {
     ...opts,
     headers: {
       apikey: SB_KEY,
-      Authorization: 'Bearer ' + SB_KEY,
+      // New-style "sb_secret_..." keys are not JWTs and must be sent only in the apikey header.
+      ...(SB_KEY.startsWith('eyJ') ? { Authorization: 'Bearer ' + SB_KEY } : {}),
       ...(opts.headers || {}),
     },
   });

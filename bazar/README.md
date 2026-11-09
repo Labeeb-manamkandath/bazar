@@ -31,7 +31,7 @@ vercel.json                Routes, security headers, region
 | Name | What |
 |---|---|
 | `SUPABASE_URL` | Supabase Project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase `service_role` key (secret) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Secret key (starts with `sb_secret_`) |
 | `ADMIN_USERNAME` | Admin username |
 | `ADMIN_PASSWORD_HASH` | Hash of the starter password (never the password itself) |
 | `SESSION_SECRET` | Long random text used to sign login cookies |

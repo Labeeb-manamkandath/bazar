@@ -133,7 +133,15 @@
         <a class="action" href="#/categories"><span class="ai">${IC.tag}</span>Manage Categories</a>
         <a class="action" href="#/homepage"><span class="ai">${IC.layout}</span>Manage Homepage</a>
         <a class="action" href="#/policies"><span class="ai">${IC.doc}</span>Manage Policies</a></div></div>
-      <div class="card"><h2>Recently added</h2>${recent.length ? `<ul class="ol">${recent.map(p => `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${esc(catName(p.category_id))} · ${priceLine(p)} · added ${fdate(p.created_at)}</small></div><button class="btn btn-sm btn-ghost" data-edit="${p.id}">Edit</button></li>`).join('')}</ul>` : '<div class="empty"><h2>No products yet</h2><p class="muted">Add your first product to show it on the website.</p></div>'}</div>`;
+      <div class="card"><h2>Recently added</h2>${recent.length ? `<ul class="ol">${recent.map(p => `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${esc(catName(p.category_id))} · ${priceLine(p)} · added ${fdate(p.created_at)}</small></div><button class="btn btn-sm btn-ghost" data-edit="${p.id}">Edit</button></li>`).join('')}</ul>` : `<div class="empty"><h2>No products yet</h2><p class="muted">Add your first product to show it on the website.</p><button class="btn btn-orange" id="seedBtn" type="button">Import starter products</button></div>`}</div>`;
+    const sb = v.querySelector('#seedBtn');
+    if (sb) sb.addEventListener('click', async () => {
+      if (!(await confirmBox({ title: 'Import starter products?', text: 'This adds 4 categories and 8 products (with photos and WhatsApp links). Anything already added is skipped.', ok: 'Yes, import' }))) return;
+      sb.disabled = true; sb.textContent = 'Importing…';
+      const r = await api('import.starter', {});
+      if (!r.ok) { sb.disabled = false; sb.textContent = 'Import starter products'; return toast(r.error, true); }
+      await refresh(); render(); toast(`Done. Added ${r.added_categories} categories and ${r.added_products} products.`);
+    });
     v.querySelector('[data-go="new"]').addEventListener('click', () => productForm(null));
     v.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => productForm(S.products.find(p => p.id === b.dataset.edit))));
     const f = v.querySelector('[data-filter]'); if (f) f.addEventListener('click', () => { ui.status = 'missing'; });
