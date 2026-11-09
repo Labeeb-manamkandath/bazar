@@ -1,40 +1,42 @@
-# Bazar by clickfor.in — Coming Soon landing page
+# Bazar by clickfor.in: online store with WhatsApp ordering + Admin Portal
 
-A single-page, pre-launch site for Bazar. Plain HTML, CSS and JavaScript with no build step and no dependencies.
+Customers browse products and tap **Buy on WhatsApp**. There is no cart, checkout or payment gateway.
+The administrator manages everything at `/admin`.
 
-## Structure
-
-```
-index.html          The whole page (styles and scripts inline)
-assets/brand/       Logo files made from the supplied logo (transparent + light versions)
-assets/img/         Concept product mockups, each in two sizes (-sm = 800px, full = up to 1600px)
-assets/             Favicons, apple-touch-icon, og-coming-soon.jpg (1200×630 share image)
-```
-
-## Sections
-
-1. Coming Soon banner with the playable "Catch the Essentials" game
-2. About Bazar (translated from the Malayalam brief)
-3. A Little Preview of Bazar: concept product and packaging mockups (complete order, filled bag, pantry essentials, fresh produce, packaging close-ups) with a lightbox
-4. Contact (phone + WhatsApp), plus a floating WhatsApp button
-
-## Run locally
+## What is inside
 
 ```
-npx serve .
-# or
-python3 -m http.server 8000
+index.html, products.html, product.html, about.html, contact.html, policy.html   Customer pages
+admin/                     Admin Portal (login + dashboard + products, categories, homepage, policies)
+api/public.js              Read-only data for the website
+api/admin.js               Admin API (every action except login needs a signed session)
+api/product-page.js        Product pages with correct title, share image and structured data
+api/sitemap.js             /sitemap.xml (built from live products)
+api/_lib/                  Database, login and helper code
+db/schema.sql              Database tables (run once in Supabase)
+assets/                    CSS, JS, logo, icons, share image
+vercel.json                Routes, security headers, region
 ```
 
-## Deploy to Vercel
+## How it works
 
-1. Push this folder to a GitHub repo (or run `npx vercel` inside it).
-2. In Vercel, import the repo. Framework preset: **Other**. No build command. Output directory: `.`
-3. Deploy.
+- **Database + photos:** Supabase (Postgres + Storage). The browser never talks to Supabase directly. Only the server functions do, using a secret key.
+- **Admin login:** the username and a password *hash* live in Vercel environment variables. Login creates a signed, HttpOnly, SameSite=Strict cookie that expires after 8 hours. Every admin API call checks it on the server. 5 wrong attempts lock the sign-in for 15 minutes.
+- **Changing the password:** Admin Portal > Account. The new hash is stored in the database and replaces the one in the environment variable.
+- **Buy on WhatsApp:** if a product has a WhatsApp Catalogue link, the button opens it. If not, it opens WhatsApp with a ready message containing the product name.
+- **Updates:** admin changes appear on the website within about 10 seconds.
 
-## Before going live — please review
+## Environment variables (Vercel)
 
-- **WhatsApp link.** All WhatsApp buttons use `https://wa.me/message/TOTXU35IP3ANE1`
-  (contact button, footer, floating button).
-- **Mockups are illustrated concepts**, not photographs. Swap any file in `assets/img/` for a real
-  photo with the same name (keep both sizes) when photos are available.
+| Name | What |
+|---|---|
+| `SUPABASE_URL` | Supabase Project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase `service_role` key (secret) |
+| `ADMIN_USERNAME` | Admin username |
+| `ADMIN_PASSWORD_HASH` | Hash of the starter password (never the password itself) |
+| `SESSION_SECRET` | Long random text used to sign login cookies |
+
+## Test on your computer (optional)
+
+`node tools/dev-server.js` starts a local copy that stores data in a `.data` folder (no Supabase needed).
+Set `ADMIN_USERNAME` and `ADMIN_PASSWORD_HASH` first.

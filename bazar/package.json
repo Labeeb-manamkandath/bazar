@@ -1,0 +1,8 @@
+{
+  "name": "bazar-store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": { "dev": "node tools/dev-server.js" },
+  "engines": { "node": ">=18" }
+}
