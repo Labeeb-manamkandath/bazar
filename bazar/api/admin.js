@@ -78,7 +78,7 @@ module.exports = async function handler(req, res) {
       const byName = {};
       cats.forEach(c => { byName[c.name.toLowerCase()] = c; });
       let maxSort = cats.reduce((m, c) => Math.max(m, c.sort || 0), 0);
-      let addedC = 0, addedP = 0, skipped = 0;
+      let addedC = 0, addedP = 0, skipped = 0, fixed = 0;
       for (const name of seed.categories) {
         if (byName[name.toLowerCase()]) continue;
         maxSort += 1;
@@ -89,7 +89,11 @@ module.exports = async function handler(req, res) {
       const popularIds = [];
       for (const p of seed.products) {
         const old = existing.find(x => x.name.toLowerCase() === p.name.toLowerCase());
-        if (old) { skipped += 1; continue; }
+        if (old) {
+          // repair links that were copied with WhatsApp's internal business id instead of the phone number
+          if (old.wa_link && old.wa_link.endsWith('/227599762624720')) { await db.update('products', old.id, { wa_link: p.wa }); fixed += 1; } else skipped += 1;
+          continue;
+        }
         const buf = fs.readFileSync(path.join(__dirname, '_seed', p.img + '.webp'));
         const url = await db.uploadImage(buf, 'image/webp', p.img);
         const cat = byName[p.cat.toLowerCase()];
@@ -105,7 +109,7 @@ module.exports = async function handler(req, res) {
         popularIds.forEach(i => { if (!ids.includes(i)) ids.push(i); });
         await db.setSetting('home', { ...home, popular_ids: ids });
       }
-      return ok(res, { added_categories: addedC, added_products: addedP, skipped });
+      return ok(res, { added_categories: addedC, added_products: addedP, skipped, fixed });
     }
 
     /* ---------- products ---------- */

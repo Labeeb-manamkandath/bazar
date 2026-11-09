@@ -126,6 +126,7 @@
     const recent = P.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
     v.innerHTML = `<div class="page-title"><h1>Dashboard</h1></div>
       <div class="stats"><div class="stat hi"><b>${P.length}</b><span>Total products</span></div><div class="stat"><b>${active.length}</b><span>Active products</span></div><div class="stat"><b>${S.categories.length}</b><span>Categories</span></div><div class="stat"><b>${P.filter(p => p.popular).length}</b><span>Most loved</span></div></div>
+      ${P.some(p => (p.wa_link || '').endsWith('/227599762624720')) ? `<div class="warn"><span><b>Some WhatsApp product links need a quick fix.</b> They will show "invalid item link" in WhatsApp.</span><button class="btn btn-sm btn-orange" id="fixLinks" type="button">Fix links now</button></div>` : ''}
       ${missing.length ? `<div class="warn"><span><b>${missing.length} product${missing.length > 1 ? 's are' : ' is'} missing a WhatsApp catalogue link.</b> Customers will get a WhatsApp message with the product name instead of the catalogue page.</span><a class="btn btn-sm btn-orange" href="#/products" data-filter="missing">Show them</a></div>` : ''}
       <div class="card"><h2>Quick actions</h2><div class="actions">
         <button class="action" data-go="new"><span class="ai">${IC.plus}</span>Add New Product</button>
@@ -134,6 +135,13 @@
         <a class="action" href="#/homepage"><span class="ai">${IC.layout}</span>Manage Homepage</a>
         <a class="action" href="#/policies"><span class="ai">${IC.doc}</span>Manage Policies</a></div></div>
       <div class="card"><h2>Recently added</h2>${recent.length ? `<ul class="ol">${recent.map(p => `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${esc(catName(p.category_id))} · ${priceLine(p)} · added ${fdate(p.created_at)}</small></div><button class="btn btn-sm btn-ghost" data-edit="${p.id}">Edit</button></li>`).join('')}</ul>` : `<div class="empty"><h2>No products yet</h2><p class="muted">Add your first product to show it on the website.</p><button class="btn btn-orange" id="seedBtn" type="button">Import starter products</button></div>`}</div>`;
+    const fl = v.querySelector('#fixLinks');
+    if (fl) fl.addEventListener('click', async () => {
+      fl.disabled = true; fl.textContent = 'Fixing…';
+      const r = await api('import.starter', {});
+      if (!r.ok) { fl.disabled = false; fl.textContent = 'Fix links now'; return toast(r.error, true); }
+      await refresh(); render(); toast(`Fixed ${r.fixed} product link${r.fixed === 1 ? '' : 's'}.`);
+    });
     const sb = v.querySelector('#seedBtn');
     if (sb) sb.addEventListener('click', async () => {
       if (!(await confirmBox({ title: 'Import starter products?', text: 'This adds 4 categories and 8 products (with photos and WhatsApp links). Anything already added is skipped.', ok: 'Yes, import' }))) return;
