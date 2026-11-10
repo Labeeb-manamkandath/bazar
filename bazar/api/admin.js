@@ -68,6 +68,8 @@ module.exports = async function handler(req, res) {
         const s = settings['policy_' + k];
         policies[k] = s || { draft: U.DEFAULT_POLICIES[k], published: U.DEFAULT_POLICIES[k], published_at: null, is_default: true };
       });
+      const videos = settings.product_videos || {};
+      products.forEach(p => { p.video = videos[p.id] || ''; });
       return ok(res, { categories, products, home: { ...U.DEFAULT_HOME, ...(settings.home || {}), hero: { ...U.DEFAULT_HOME.hero, ...((settings.home || {}).hero || {}) } }, policies, user: session.u });
     }
 
@@ -121,6 +123,8 @@ module.exports = async function handler(req, res) {
       const products = await db.all('products');
       const dupe = products.find(p => p.id !== body.id && p.name.toLowerCase() === value.name.toLowerCase() && p.category_id === value.category_id && p.quantity_value === value.quantity_value && p.quantity_unit === value.quantity_unit);
       if (dupe) errors.name = 'A product with the same name, category and size already exists.';
+      const vid = U.cleanVideo(body.video, db.STORAGE_PUBLIC);
+      if (vid.error) errors.video = vid.error;
       if (Object.keys(errors).length) return fail(res, 422, 'Please fix the highlighted fields.', { fields: errors });
       let saved;
       if (body.id) {
@@ -132,7 +136,13 @@ module.exports = async function handler(req, res) {
       } else {
         saved = await db.insert('products', { ...value, slug: await uniqueSlug('products', U.slugify(value.name)) });
       }
-      return ok(res, { product: saved });
+      // Videos live in settings (no database change needed): { productId: url }
+      const videos = (await db.getSetting('product_videos')) || {};
+      if ((videos[saved.id] || '') !== vid.value) {
+        if (vid.value) videos[saved.id] = vid.value; else delete videos[saved.id];
+        await db.setSetting('product_videos', videos);
+      }
+      return ok(res, { product: { ...saved, video: vid.value } });
     }
 
     if (action === 'product.patch' && isPost) {
@@ -149,6 +159,8 @@ module.exports = async function handler(req, res) {
     if (action === 'product.delete' && isPost) {
       const body = await U.readBody(req, 20000);
       await db.remove('products', body.id);
+      const videos = (await db.getSetting('product_videos')) || {};
+      if (videos[body.id]) { delete videos[body.id]; await db.setSetting('product_videos', videos); }
       const home = (await db.getSetting('home')) || {};
       if (Array.isArray(home.popular_ids) && home.popular_ids.includes(body.id)) {
         await db.setSetting('home', { ...home, popular_ids: home.popular_ids.filter(i => i !== body.id) });
@@ -210,9 +222,11 @@ module.exports = async function handler(req, res) {
       if (!ctaText) errors.cta_text = 'Please enter the button text.';
       if (!ctaUrl) ctaUrl = U.WA_GENERAL;
       if (!(U.isWaLink(ctaUrl) || /^\/[a-z0-9\-\/]*$/i.test(ctaUrl))) errors.cta_url = 'Use a WhatsApp link (https://wa.me/...) or a page like /products.';
-      if (Object.keys(errors).length) return fail(res, 422, 'Please fix the highlighted fields.', { fields: errors });
+      const ban = U.cleanBanners(body.banners);
+      Object.assign(errors, ban.errors);
+      if (Object.keys(errors).length) return fail(res, 422, Object.keys(ban.errors).length ? Object.values(ban.errors)[0] : 'Please fix the highlighted fields.', { fields: errors });
       const ids = a => (Array.isArray(a) ? a.filter(x => typeof x === 'string').slice(0, 60) : []);
-      const home = { hero: { headline, text, number, cta_text: ctaText, cta_url: ctaUrl }, popular_ids: ids(body.popular_ids), category_ids: ids(body.category_ids) };
+      const home = { hero: { headline, text, number, cta_text: ctaText, cta_url: ctaUrl }, banners: ban.value, popular_ids: ids(body.popular_ids), category_ids: ids(body.category_ids) };
       await db.setSetting('home', home);
       // The "Most Loved" list is the single source of truth for the popular flag.
       const prods = await db.all('products');
@@ -236,6 +250,18 @@ module.exports = async function handler(req, res) {
       if (body.publish) { next.published = draft; next.published_at = new Date().toISOString(); }
       await db.setSetting('policy_' + key, next);
       return ok(res, { policy: next });
+    }
+
+    /* ---------- video upload: hand out a one-time signed upload link ---------- */
+    if (action === 'video.sign' && isPost) {
+      const body = await U.readBody(req, 20000);
+      const types = { 'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' };
+      const ext = types[body.type];
+      if (!ext) return fail(res, 422, 'Please choose an MP4, WebM or MOV video.');
+      if (!(body.size > 0) || body.size > 50 * 1024 * 1024) return fail(res, 413, 'This video is too large. The limit is 50 MB.');
+      const signed = await db.signVideoUpload(U.slugify(body.name || 'video') || 'video', ext);
+      if (!signed) return fail(res, 501, 'Video upload works on the live website only. You can paste a YouTube link instead.');
+      return ok(res, signed);
     }
 
     /* ---------- image upload ---------- */

@@ -179,3 +179,23 @@ dialog.dlg::backdrop{background:rgba(18,41,21,.65)}
 .preview h2{font-size:1.15rem;margin:18px 0 8px}
 .preview h2:first-child{margin-top:0}
 .preview p+p,.preview ul{margin-top:8px}
+
+/* Offer banners editor */
+.ban-list{display:grid;gap:12px}
+.ban{border:1.5px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.ban-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.ban-tools{display:flex;gap:6px}
+.ban-img .imgs{grid-template-columns:1fr}
+.ban-img .im,.ban-img .add-img{aspect-ratio:3/1;width:100%;max-width:600px}
+.ban-img .im img{object-fit:cover}
+.ban .row{margin-top:10px}
+.ban-add{display:flex;align-items:center;gap:12px;margin-top:12px}
+.ban-empty{margin:0}
+@media (max-width:640px){.ban .row{grid-template-columns:1fr}}
+
+/* Product video field */
+.vid-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vid-row input{flex:1 1 220px;min-width:0}
+.vid-up{cursor:pointer}
+.vid-bar{height:6px;border-radius:99px;background:var(--sand);overflow:hidden;margin-top:6px}
+.vid-bar i{display:block;height:100%;background:var(--orange);transition:width .2s}

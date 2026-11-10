@@ -20,8 +20,9 @@ async function catalog() {
   const [cats, prods, settings] = await Promise.all([db.all('categories'), db.all('products'), db.getAllSettings()]);
   const activeCats = cats.filter(c => c.active).sort((a, b) => (a.sort || 0) - (b.sort || 0) || a.name.localeCompare(b.name));
   const catById = Object.fromEntries(activeCats.map(c => [c.id, c]));
+  const videos = settings.product_videos || {};
   const products = prods.filter(p => p.status === 'active' && catById[p.category_id])
-    .map(p => shapeProduct(p, catById[p.category_id]));
+    .map(p => ({ ...shapeProduct(p, catById[p.category_id]), video: videos[p.id] || '' }));
   const counts = {};
   products.forEach(p => { counts[p.category.id] = (counts[p.category.id] || 0) + 1; });
   const categories = activeCats.map(c => ({ id: c.id, name: c.name, slug: c.slug, description: c.description, image_url: c.image_url, count: counts[c.id] || 0 }));
@@ -36,7 +37,7 @@ async function catalog() {
     }).map(p => p.id);
   const homeCats = (Array.isArray(home.category_ids) && home.category_ids.length
     ? home.category_ids.filter(id => catById[id]) : categories.map(c => c.id));
-  return { categories, products, home: { hero: home.hero, popular_ids: popular, category_ids: homeCats } };
+  return { categories, products, home: { hero: home.hero, banners: Array.isArray(home.banners) ? home.banners.filter(b => b && b.image).slice(0, U.MAX_BANNERS) : [], popular_ids: popular, category_ids: homeCats } };
 }
 
 module.exports = async function handler(req, res) {

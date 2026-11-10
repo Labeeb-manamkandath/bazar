@@ -52,10 +52,7 @@
     $('clearAll').hidden = !dirty;
     $('qClear').hidden = !state.q;
     $('sort').value = state.sort;
-    $('chips').querySelectorAll('.chip').forEach(b => {
-      const k = b.dataset.k;
-      b.setAttribute('aria-pressed', String(k === 'all' ? !state.cat && !state.popular : k === 'popular' ? state.popular : (b.dataset.id === state.cat && !state.popular)));
-    });
+    $('filter').value = state.popular ? 'popular' : state.cat ? 'cat:' + state.cat : 'all';
     if (!catalog.products.length) {
       $('grid').innerHTML = B.emptyProducts({ title: 'The shelves are being stocked', text: 'New products are being added. Message us on WhatsApp to ask what is available.' }, false);
     } else if (!list.length) {
@@ -69,13 +66,12 @@
 
   B.boot({ active: 'products' }).then(c => {
     catalog = c; readUrl();
-    $('chips').innerHTML = `<button class="chip" type="button" data-k="all" aria-pressed="true">All products</button><button class="chip" type="button" data-k="popular" aria-pressed="false">Most loved</button>` +
-      c.categories.map(x => `<button class="chip" type="button" data-k="cat" data-id="${esc(x.id)}" aria-pressed="false">${esc(x.name)}</button>`).join('');
+    $('filter').insertAdjacentHTML('beforeend', c.categories.map(x => `<option value="cat:${esc(x.id)}">${esc(x.name)}</option>`).join(''));
     $('q').value = state.q;
-    $('chips').addEventListener('click', e => {
-      const b = e.target.closest('.chip'); if (!b) return;
-      state.popular = b.dataset.k === 'popular';
-      state.cat = b.dataset.k === 'cat' ? b.dataset.id : '';
+    $('filter').addEventListener('change', e => {
+      const v = e.target.value;
+      state.popular = v === 'popular';
+      state.cat = v.startsWith('cat:') ? v.slice(4) : '';
       update();
     });
     let t;

@@ -91,9 +91,24 @@ const DEFAULT_HOME = {
     cta_text: 'Shop on WhatsApp',
     cta_url: WA_GENERAL,
   },
+  banners: [],
   popular_ids: [],
   category_ids: [],
 };
+
+// Offer banners on the homepage (max 4). Each: { image, link, alt }.
+const MAX_BANNERS = 4;
+function isSiteLink(u) { return /^\/(?!\/)[a-z0-9\-\/?=&#]*$/i.test(u); }
+function cleanBanners(list) {
+  const errors = {};
+  const out = (Array.isArray(list) ? list : []).slice(0, MAX_BANNERS).map((b, i) => {
+    const image = str(b && b.image, 600), link = str(b && b.link, 500), alt = str(b && b.alt, 140);
+    if (!image || !isImageUrl(image)) errors['banner_' + i] = 'Banner ' + (i + 1) + ': please add a banner image.';
+    else if (link && !(isWaLink(link) || isSiteLink(link))) errors['banner_' + i] = 'Banner ' + (i + 1) + ': the link should be a WhatsApp link (https://wa.me/...) or a page like /products.';
+    return { image, link, alt };
+  });
+  return { errors, value: out };
+}
 
 const DEFAULT_POLICIES = {
   delivery: {
@@ -130,4 +145,24 @@ function cleanSections(sections) {
     .filter(s => s.heading || s.body);
 }
 
-module.exports = { send, readBody, slugify, str, cleanProduct, cleanSections, isWaLink, isImageUrl, DEFAULT_HOME, DEFAULT_POLICIES, WA_GENERAL, WA_PHONE, PRICE_UNITS };
+// Product video: a YouTube link, or a video file uploaded to our own storage.
+function youtubeId(u) {
+  try {
+    const x = new URL(u);
+    if (x.protocol !== 'https:') return '';
+    const h = x.hostname.replace(/^www\.|^m\./, '');
+    let id = '';
+    if (h === 'youtu.be') id = x.pathname.slice(1);
+    else if (h === 'youtube.com' || h === 'youtube-nocookie.com') id = x.searchParams.get('v') || (x.pathname.match(/^\/(?:shorts|embed|live)\/([^/]+)/) || [])[1] || '';
+    return /^[A-Za-z0-9_-]{6,20}$/.test(id) ? id : '';
+  } catch { return ''; }
+}
+function cleanVideo(v, storagePublic) {
+  const u = str(v, 600);
+  if (!u) return { value: '' };
+  if (youtubeId(u)) return { value: u };
+  if ((storagePublic && u.startsWith(storagePublic + 'videos/')) || /^\/uploads\/[\w.-]+\.(mp4|webm|mov)$/i.test(u)) return { value: u };
+  return { value: '', error: 'Use a YouTube link, or upload a video file.' };
+}
+
+module.exports = { youtubeId, cleanVideo, cleanBanners, MAX_BANNERS, isSiteLink, send, readBody, slugify, str, cleanProduct, cleanSections, isWaLink, isImageUrl, DEFAULT_HOME, DEFAULT_POLICIES, WA_GENERAL, WA_PHONE, PRICE_UNITS };

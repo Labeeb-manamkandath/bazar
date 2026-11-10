@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Figtree:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/site.css?v=2">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -30,11 +30,12 @@
 <div class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span id="crumbNow">Products</span></nav><h1 id="pageTitle">All Products</h1><p id="pageSub">Pick what you love, then tap Buy on WhatsApp.</p></div></div>
 <div class="toolbar"><div class="wrap">
   <div class="tb-row">
-    <div class="search"><label class="sr-only" for="q">Search products</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search products" autocomplete="off" enterkeyhint="search"><button class="clear" type="button" id="qClear" aria-label="Clear search" hidden>&times;</button></div>
+    <div class="search"><label class="sr-only" for="q">Search products</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search" autocomplete="off" enterkeyhint="search"><button class="clear" type="button" id="qClear" aria-label="Clear search" hidden>&times;</button></div>
+    <label class="sr-only" for="filter">Filter by category</label>
+    <select class="select tb-filter" id="filter"><option value="all">All products</option><option value="popular">Most loved</option></select>
     <label class="sr-only" for="sort">Sort products</label>
-    <select class="select" id="sort"><option value="popular">Popularity</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option><option value="new">Newest First</option></select>
+    <select class="select tb-sort" id="sort"><option value="popular">Popularity</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option><option value="new">Newest First</option></select>
   </div>
-  <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
 </div></div>
 <div class="wrap" style="padding-bottom:clamp(40px,6vw,80px)">
   <div class="results-bar"><span class="count" id="count" aria-live="polite">Loading…</span><button class="linkbtn" type="button" id="clearAll" hidden>Clear filters</button></div>
@@ -43,7 +44,7 @@
 </div>
 </main>
 <footer id="site-footer"></footer>
-<script src="/assets/js/site.js"></script>
-<script src="/assets/js/products.js"></script>
+<script src="/assets/js/site.js?v=2"></script>
+<script src="/assets/js/products.js?v=2"></script>
 </body>
 </html>

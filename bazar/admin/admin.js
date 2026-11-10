@@ -217,11 +217,11 @@
   }
 
   /* ---------- image upload (resize in the browser, then upload with progress) ---------- */
-  async function resizeToDataUrl(file) {
+  async function resizeToDataUrl(file, max = 1400) {
     if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('Please choose a JPG, PNG or WebP image.');
     if (file.size > 20 * 1024 * 1024) throw new Error('This image is very large (over 20 MB). Please choose a smaller one.');
     const bmp = await createImageBitmap(file);
-    const max = 1400, k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
     const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
     const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(bmp, 0, 0, c.width, c.height);
     const blobOf = (type, q) => new Promise(r => c.toBlob(r, type, q));
@@ -244,12 +244,12 @@
   }
 
   // Reusable image grid. items: [{url, id, progress}] ; onChange called after edits.
-  function imageManager(root, items, { max = 8, single = false, onChange }) {
+  function imageManager(root, items, { max = 8, single = false, onChange, px = 1400, hint = '' }) {
     const draw = () => {
       root.innerHTML = `<div class="imgs">${items.map((it, i) => `<div class="im ${it.uploading ? 'up' : ''}"><img src="${esc(it.url)}" alt="Photo ${i + 1}">${!single && i === 0 && !it.uploading ? '<span class="tag">Main photo</span>' : ''}
         ${it.uploading ? `<div class="bar"><i style="width:${Math.round((it.progress || 0) * 100)}%"></i></div>` : `<div class="tools"><span>${!single && i > 0 ? `<button type="button" data-main="${i}" title="Make main photo" aria-label="Make this the main photo">★</button>` : ''}</span><button type="button" data-rm="${i}" title="Remove photo" aria-label="Remove photo ${i + 1}">${IC.trash}</button></div>`}</div>`).join('')}
         ${items.length < max ? `<label class="add-img"><span><b>+</b>Add photo${single ? '' : 's'}</span><input type="file" accept="image/jpeg,image/png,image/webp" ${single ? '' : 'multiple'} hidden></label>` : ''}</div>
-        <p class="hint" style="margin-top:8px">${single ? 'JPG, PNG or WebP.' : 'The first photo is the main photo. Up to ' + max + ' photos. JPG, PNG or WebP.'} Photos are resized automatically.</p><p class="err" data-imgerr></p>`;
+        <p class="hint" style="margin-top:8px">${hint ? hint + ' ' : ''}${single ? 'JPG, PNG or WebP.' : 'The first photo is the main photo. Up to ' + max + ' photos. JPG, PNG or WebP.'} Photos are resized automatically.</p><p class="err" data-imgerr></p>`;
     };
     draw();
     root.addEventListener('click', e => {
@@ -264,7 +264,7 @@
       for (const f of files) {
         const it = { url: URL.createObjectURL(f), uploading: true, progress: 0 }; items.push(it); draw(); onChange && onChange();
         try {
-          const data = await resizeToDataUrl(f);
+          const data = await resizeToDataUrl(f, px);
           const r = await uploadWithProgress(data, f.name.replace(/\.[^.]+$/, ''), p => { it.progress = p; const bar = root.querySelectorAll('.im')[items.indexOf(it)]; if (bar && bar.querySelector('.bar i')) bar.querySelector('.bar i').style.width = Math.round(p * 100) + '%'; });
           if (!r.ok) throw new Error(r.error || 'Upload failed.');
           it.url = r.url; it.uploading = false;
@@ -306,6 +306,12 @@
         </div>
         <div class="field" data-f="description"><label for="f_desc">Description</label><textarea id="f_desc" maxlength="4000">${esc(p.description || '')}</textarea><span data-e></span></div>
         <div class="field"><span class="label">Product photos</span><div id="imgRoot"></div></div>
+        <div class="field" data-f="video"><label for="f_vid">Product video (optional)</label>
+          <div class="vid-row"><input id="f_vid" type="url" inputmode="url" placeholder="Paste a YouTube link, or upload a video" value="${esc(p.video || '')}" autocapitalize="none" spellcheck="false">
+            <label class="btn btn-sm btn-ghost vid-up">Upload video<input type="file" id="f_vidFile" accept="video/mp4,video/webm,video/quicktime" hidden></label>
+            <button class="btn btn-sm btn-ghost" type="button" id="f_vidClear"${p.video ? '' : ' hidden'}>Remove</button></div>
+          <div class="vid-bar" id="f_vidBar" hidden><i style="width:0%"></i></div>
+          <span class="hint">Shown on the product page next to the photos. MP4 or MOV up to 50 MB (about 1 minute), or a YouTube link.</span><span data-e></span></div>
         <div class="field" data-f="wa_link"><label for="f_wa">WhatsApp catalogue product link</label><input id="f_wa" type="url" inputmode="url" placeholder="https://wa.me/p/…" value="${esc(p.wa_link || '')}" autocapitalize="none" spellcheck="false"><span class="hint">In WhatsApp Business: open Catalogue, tap the product, then Share and Copy link. Paste it here. Customers who tap “Buy on WhatsApp” will land on this product.</span><span data-e></span><span id="waNote"></span></div>
         <div class="row">
           <label class="switch"><input type="checkbox" id="f_active" ${p.status !== 'inactive' ? 'checked' : ''}><div><b>Active</b><span>Show this product on the website</span></div></label>
@@ -327,6 +333,31 @@
     }));
     dlg.addEventListener('cancel', e => { if (dirty && !window.confirm('Discard your changes? They are not saved.')) e.preventDefault(); else dlg.dataset.lock = ''; }, { once: true });
 
+    // ---- product video ----
+    let vidBusy = false;
+    const vidIn = $('#f_vid'), vidClear = $('#f_vidClear'), vidBar = $('#f_vidBar');
+    const vidErr = m => { const f = form.querySelector('[data-f="video"]'); f.classList.toggle('invalid', !!m); f.querySelector('[data-e]').innerHTML = m ? `<span class="err" role="alert">${esc(m)}</span>` : ''; };
+    vidIn.addEventListener('input', () => { vidClear.hidden = !vidIn.value.trim(); vidErr(''); });
+    vidClear.addEventListener('click', () => { vidIn.value = ''; vidClear.hidden = true; dirty = true; vidErr(''); });
+    $('#f_vidFile').addEventListener('change', async e => {
+      const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+      vidErr('');
+      if (!/^video\/(mp4|webm|quicktime)$/.test(f.type)) return vidErr('Please choose an MP4, WebM or MOV video.');
+      if (f.size > 50 * 1024 * 1024) return vidErr('This video is ' + Math.round(f.size / 1048576) + ' MB. The limit is 50 MB. Please trim or compress it, or use a YouTube link.');
+      const sg = await api('video.sign', { name: f.name.replace(/\.[^.]+$/, ''), type: f.type, size: f.size });
+      if (!sg.ok) return vidErr(sg.error || 'Could not start the upload.');
+      vidBusy = true; vidBar.hidden = false; const bi = vidBar.querySelector('i'); bi.style.width = '0%';
+      const done = await new Promise(res => {
+        const x = new XMLHttpRequest(); x.open('PUT', sg.uploadUrl);
+        x.setRequestHeader('Content-Type', f.type); x.setRequestHeader('x-upsert', 'false');
+        x.upload.onprogress = ev => { if (ev.lengthComputable) bi.style.width = Math.round(ev.loaded / ev.total * 100) + '%'; };
+        x.onload = () => res(x.status >= 200 && x.status < 300); x.onerror = () => res(false); x.send(f);
+      });
+      vidBusy = false; vidBar.hidden = true;
+      if (!done) return vidErr('The video could not be uploaded. Check your internet and try again.');
+      vidIn.value = sg.publicUrl; vidClear.hidden = false; dirty = true; toast('Video uploaded. Save the product to publish it.');
+    });
+
     const waNote = () => { const v = $('#f_wa').value.trim(); $('#waNote').innerHTML = v ? `<a class="small" href="${esc(v)}" target="_blank" rel="noopener noreferrer">Test this link ↗</a>` : '<span class="pill warn" style="align-self:flex-start">No catalogue link yet. Customers will get a WhatsApp message with the product name instead.</span>'; };
     waNote(); $('#f_wa').addEventListener('input', waNote);
 
@@ -345,12 +376,13 @@
     form.addEventListener('submit', async e => {
       e.preventDefault();
       if (mgr.busy()) return toast('Please wait for the photos to finish uploading.', true);
+      if (vidBusy) return toast('Please wait for the video to finish uploading.', true);
       $$('[data-f]', form).forEach(f => { f.classList.remove('invalid'); const s = f.querySelector('[data-e]'); if (s) s.innerHTML = ''; });
       $('#pfErr').hidden = true;
       const body = {
         id: p.id, name: $('#f_name').value.trim(), category_id: catSel.value === '__new' ? '' : catSel.value, price: $('#f_price').value,
         price_unit: $('#f_pu').value, quantity_value: $('#f_qv').value.trim(), quantity_unit: $('#f_qu').value, description: $('#f_desc').value.trim(),
-        images: items.map(i => i.url), wa_link: $('#f_wa').value.trim(), status: $('#f_active').checked ? 'active' : 'inactive',
+        images: items.map(i => i.url), video: vidIn.value.trim(), wa_link: $('#f_wa').value.trim(), status: $('#f_active').checked ? 'active' : 'inactive',
         in_stock: $('#f_stock').checked, popular: $('#f_pop').checked, featured: $('#f_feat').checked,
       };
       const btn = $('#pfSave'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Saving…';
@@ -436,12 +468,17 @@
     const order = Array.isArray(h.popular_ids) ? h.popular_ids : [];
     let pop = S.products.filter(p => p.popular).sort((a, b) => { const x = order.indexOf(a.id), y = order.indexOf(b.id); return (x < 0 ? 1e6 : x) - (y < 0 ? 1e6 : y); }).map(p => p.id);
     let cats = (h.category_ids && h.category_ids.length ? h.category_ids.filter(id => S.categories.some(c => c.id === id)) : S.categories.filter(c => c.active).sort((a, b) => (a.sort || 0) - (b.sort || 0)).map(c => c.id));
+    const MAXB = 4;
+    const bans = (Array.isArray(h.banners) ? h.banners : []).map(b => ({ image: b.image || '', link: b.link || '', alt: b.alt || '' }));
     let dirty = false;
     const mark = () => { dirty = true; const s = $('#hState'); s.textContent = 'You have unsaved changes'; s.className = 'state dirty'; };
 
     v.innerHTML = `<div class="page-title"><h1>Homepage</h1><a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">View website ${IC.ext}</a></div>
       <p class="form-error" id="hErr" role="alert" hidden></p>
-      <div class="card"><h2>Hero banner</h2>
+      <div class="card"><h2>Offer banners</h2><p class="hint" style="margin-bottom:12px">Shown at the top of the homepage and slide every 5 seconds. Up to ${MAXB} banners. Best size: <b>1500 × 500 pixels</b> (3 : 1). Keep the text large and in the middle so it reads well on phones. With no banners, the welcome banner below is shown.</p>
+        <div id="banList" class="ban-list"></div>
+        <div class="ban-add"><button class="btn btn-sm btn-ghost" id="banAdd" type="button">${IC.plus} Add banner</button><span class="hint" id="banCount"></span></div></div>
+      <div class="card"><h2>Welcome banner and WhatsApp bar</h2><p class="hint" style="margin-bottom:12px">The headline and text show as the welcome banner when there are no offer banners. The number and button show in the WhatsApp bar under the banners.</p>
         <div class="field" data-f="headline"><label for="h_head">Main headline *</label><input id="h_head" type="text" maxlength="120" value="${esc(h.hero.headline)}"><span class="hint">The word “WhatsApp” is highlighted in orange automatically.</span><span data-e></span></div>
         <div class="field"><label for="h_text">Supporting text</label><textarea id="h_text" maxlength="300" style="min-height:80px">${esc(h.hero.text)}</textarea></div>
         <div class="row"><div class="field"><label for="h_num">WhatsApp number shown on the banner</label><input id="h_num" type="text" maxlength="30" value="${esc(h.hero.number)}"><span class="hint">This is only the text customers see.</span></div>
@@ -461,11 +498,33 @@
       const ca = S.categories.filter(c => !cats.includes(c.id)); $('#catAdd').innerHTML = ca.length ? ca.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('') : '<option value="">All categories are already added</option>'; $('#catAddBtn').disabled = !ca.length;
     };
     draw();
+
+    // ---- offer banners ----
+    const banList = $('#banList');
+    const drawBans = () => {
+      banList.innerHTML = bans.length ? bans.map((b, i) => `<div class="ban" data-i="${i}">
+        <div class="ban-head"><b>Banner ${i + 1}</b><span class="ban-tools">${arrows('', i, bans.length, 'b')}</span></div>
+        <div class="ban-img" id="banImg${i}"></div>
+        <div class="row">
+          <div class="field"><label for="banLink${i}">Link when tapped (optional)</label><input id="banLink${i}" data-k="link" type="text" maxlength="500" placeholder="/category/combos or https://wa.me/p/…" value="${esc(b.link)}" autocapitalize="none" spellcheck="false"><span class="hint">A page like /products or /category/combos, or a WhatsApp link.</span></div>
+          <div class="field"><label for="banAlt${i}">What the banner says</label><input id="banAlt${i}" data-k="alt" type="text" maxlength="140" placeholder="e.g. 10% off all combos this week" value="${esc(b.alt)}"><span class="hint">Read out to people using screen readers.</span></div>
+        </div></div>`).join('') : '<p class="muted ban-empty">No offer banners yet. The welcome banner is shown.</p>';
+      bans.forEach((b, i) => {
+        const items = b.image ? [{ url: b.image }] : [];
+        b.mgr = imageManager($('#banImg' + i), items, { max: 1, single: true, px: 2000, hint: 'Banner image, 1500 × 500 px.', onChange: () => { b.image = items[0] && !items[0].uploading ? items[0].url : ''; mark(); } });
+      });
+      $('#banAdd').disabled = bans.length >= MAXB;
+      $('#banCount').textContent = bans.length + ' of ' + MAXB + ' used';
+    };
+    drawBans();
+    $('#banAdd').addEventListener('click', () => { if (bans.length < MAXB) { bans.push({ image: '', link: '', alt: '' }); drawBans(); mark(); } });
+    banList.addEventListener('input', e => { const k = e.target.dataset.k, row = e.target.closest('.ban'); if (k && row) bans[+row.dataset.i][k] = e.target.value; });
+
     const mv = (arr, i, d) => { const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; };
     v.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      for (const [k, arr] of [['p', pop], ['c', cats]]) {
-        for (const act of ['up', 'dn', 'rm']) { const a = b.getAttribute(`data-${k}-${act}`); if (a !== null) { const i = +a; if (act === 'rm') arr.splice(i, 1); else mv(arr, i, act === 'up' ? -1 : 1); draw(); mark(); return; } }
+      for (const [k, arr] of [['p', pop], ['c', cats], ['b', bans]]) {
+        for (const act of ['up', 'dn', 'rm']) { const a = b.getAttribute(`data-${k}-${act}`); if (a !== null) { const i = +a; if (act === 'rm') arr.splice(i, 1); else mv(arr, i, act === 'up' ? -1 : 1); if (k === 'b') drawBans(); else draw(); mark(); return; } }
       }
     });
     $('#popAddBtn').addEventListener('click', () => { const id = $('#popAdd').value; if (id) { pop.push(id); draw(); mark(); } });
@@ -473,8 +532,11 @@
     v.addEventListener('input', e => { if (e.target.matches('input,textarea')) mark(); });
     $('#hSave').addEventListener('click', async () => {
       $$('[data-f]', v).forEach(f => { f.classList.remove('invalid'); f.querySelector('[data-e]').innerHTML = ''; }); $('#hErr').hidden = true;
+      if (bans.some(b => b.mgr && b.mgr.busy())) return toast('Please wait for the banner image to finish uploading.', true);
+      const missing = bans.findIndex(b => !b.image);
+      if (missing >= 0) { $('#hErr').textContent = 'Banner ' + (missing + 1) + ' has no image. Add an image or remove the banner.'; $('#hErr').hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
       const btn = $('#hSave'); btn.disabled = true; btn.textContent = 'Saving…';
-      const r = await api('home.save', { hero: { headline: $('#h_head').value, text: $('#h_text').value, number: $('#h_num').value, cta_text: $('#h_cta').value, cta_url: $('#h_url').value }, popular_ids: pop, category_ids: cats });
+      const r = await api('home.save', { banners: bans.map(b => ({ image: b.image, link: b.link.trim(), alt: b.alt.trim() })), hero: { headline: $('#h_head').value, text: $('#h_text').value, number: $('#h_num').value, cta_text: $('#h_cta').value, cta_url: $('#h_url').value }, popular_ids: pop, category_ids: cats });
       btn.disabled = false; btn.textContent = 'Save and publish';
       if (!r.ok) { if (r.fields) Object.entries(r.fields).forEach(([k, m]) => { const f = v.querySelector(`[data-f="${k}"]`); if (f) { f.classList.add('invalid'); f.querySelector('[data-e]').innerHTML = `<span class="err">${esc(m)}</span>`; } }); $('#hErr').textContent = r.error; $('#hErr').hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
       await refresh(); dirty = false; $('#hState').textContent = 'All changes saved'; $('#hState').className = 'state clean'; toast('Saved. The homepage is updated.');

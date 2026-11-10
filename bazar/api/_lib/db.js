@@ -160,4 +160,15 @@ async function uploadImage(buffer, contentType, name) {
   return `/uploads/${file}`;
 }
 
-module.exports = { all, insert, update, remove, getSetting, getAllSettings, setSetting, uploadImage, configured, USE_SB };
+// Videos are too big to pass through a server function, so the browser uploads them
+// straight to Supabase Storage with a one-time signed link made here.
+async function signVideoUpload(name, ext) {
+  if (!USE_SB) return null;
+  const file = `videos/${Date.now()}-${crypto.randomBytes(4).toString('hex')}-${name}.${ext}`;
+  const r = await sb(`/storage/v1/object/upload/sign/${BUCKET}/${file}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+  if (!r || !r.url) throw new Error('Could not prepare the video upload.');
+  return { uploadUrl: `${SB_URL}/storage/v1${r.url}`, publicUrl: `${SB_URL}/storage/v1/object/public/${BUCKET}/${file}` };
+}
+const STORAGE_PUBLIC = SB_URL ? `${SB_URL}/storage/v1/object/public/${BUCKET}/` : '';
+
+module.exports = { signVideoUpload, STORAGE_PUBLIC, all, insert, update, remove, getSetting, getAllSettings, setSetting, uploadImage, configured, USE_SB };

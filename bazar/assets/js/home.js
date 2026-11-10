@@ -2,12 +2,56 @@
   const B = window.Bazar, esc = B.esc;
   const isExternal = u => /^https?:\/\//i.test(u);
 
+  function banners(list) {
+    list = list.filter(b => b && b.image).slice(0, 4);
+    if (!list.length) return;
+    const slides = document.getElementById('slides'), dots = document.getElementById('slDots');
+    const prev = document.getElementById('slPrev'), next = document.getElementById('slNext');
+    const n = list.length;
+    slides.innerHTML = list.map((b, i) => {
+      const img = `<img src="${esc(b.image)}" alt="${esc(b.alt || 'Offer banner ' + (i + 1))}" width="1500" height="500" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async">`;
+      const link = b.link ? `<a href="${esc(b.link)}"${isExternal(b.link) ? ' target="_blank" rel="noopener noreferrer"' : ''}>${img}</a>` : img;
+      return `<div class="slide" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${n}">${link}</div>`;
+    }).join('');
+    if (n < 2) return;
+
+    prev.hidden = next.hidden = dots.hidden = false;
+    dots.innerHTML = list.map((_, i) => `<button type="button" aria-label="Show banner ${i + 1}"${i ? '' : ' aria-current="true"'}></button>`).join('');
+    const dotBtns = [...dots.children];
+    let cur = 0;
+    const go = (i, smooth = true) => {
+      cur = (i + n) % n;
+      slides.scrollTo({ left: cur * slides.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+    };
+    slides.addEventListener('scroll', () => {
+      const i = Math.round(slides.scrollLeft / Math.max(1, slides.clientWidth));
+      if (i !== cur) cur = i;
+      dotBtns.forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
+    }, { passive: true });
+    prev.addEventListener('click', () => { go(cur - 1); restart(); });
+    next.addEventListener('click', () => { go(cur + 1); restart(); });
+    dotBtns.forEach((d, k) => d.addEventListener('click', () => { go(k); restart(); }));
+    window.addEventListener('resize', () => go(cur, false));
+
+    // Auto-advance every 5 seconds; pause while the visitor is touching, hovering or focused on it.
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const slider = document.getElementById('slider');
+    let timer = null, paused = false;
+    const restart = () => { clearInterval(timer); if (!still) timer = setInterval(() => { if (!paused && !document.hidden) go(cur + 1); }, 5000); };
+    ['mouseenter', 'focusin', 'touchstart'].forEach(e => slider.addEventListener(e, () => { paused = true; }, { passive: true }));
+    ['mouseleave', 'focusout', 'touchend'].forEach(e => slider.addEventListener(e, () => { paused = false; }, { passive: true }));
+    restart();
+  }
+
   B.boot({ active: 'home' }).then(c => {
-    // --- hero (editable in the admin) ---
+    // --- welcome text + WhatsApp bar (editable in the admin) ---
     const h = c.home.hero;
-    const title = document.getElementById('hero-title');
-    title.innerHTML = esc(h.headline).replace(/(whatsapp)/i, '<span class="hl">$1</span>');
-    document.getElementById('heroText').textContent = h.text;
+    document.getElementById('welcomeTitle').innerHTML = esc(h.headline).replace(/(whatsapp)/i, '<span class="hl">$1</span>');
+    document.getElementById('welcomeText').textContent = h.text;
+    document.getElementById('pageTitle').textContent = 'Bazar by clickfor.in: ' + h.headline;
+
+    // --- offer banners (max 4). With none, the welcome banner stays. ---
+    banners(c.home.banners || []);
     document.getElementById('heroNumberText').textContent = h.number || B.SHOW_PHONE;
     document.getElementById('ctaNum').textContent = h.number || B.SHOW_PHONE;
     document.getElementById('heroCtaText').textContent = h.cta_text;

@@ -14,6 +14,14 @@
     if (!document.title || /^Product not found|^Bazar by/.test(document.title)) document.title = p.name + ' | Bazar by clickfor.in';
 
     const imgs = p.images.length ? p.images : [];
+    // Media = photos, then the video (if any). A video is a YouTube link or an uploaded file.
+    const ytId = u => { try { const x = new URL(u), h = x.hostname.replace(/^www\.|^m\./, ''); const id = h === 'youtu.be' ? x.pathname.slice(1) : (h === 'youtube.com' ? (x.searchParams.get('v') || (x.pathname.match(/^\/(?:shorts|embed|live)\/([^/]+)/) || [])[1]) : ''); return /^[A-Za-z0-9_-]{6,20}$/.test(id || '') ? id : ''; } catch { return ''; } };
+    const media = imgs.map(u => ({ type: 'img', src: u }));
+    if (p.video) { const id = ytId(p.video); media.push(id ? { type: 'yt', id } : { type: 'file', src: p.video }); }
+    const mediaHtml = m => m.type === 'img' ? `<img id="gImg" src="${esc(m.src)}" alt="${esc(p.name)}" width="900" height="900" fetchpriority="high">`
+      : m.type === 'yt' ? `<iframe src="https://www.youtube-nocookie.com/embed/${esc(m.id)}?rel=0&playsinline=1" title="${esc(p.name)} video" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`
+      : `<video src="${esc(m.src)}" controls playsinline preload="metadata" aria-label="${esc(p.name)} video"></video>`;
+    const playIc = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 001.5.86l11-6.5a1 1 0 000-1.72l-11-6.5A1 1 0 008 5.5z"/></svg>';
     const buyBtn = (cls, label) => p.in_stock
       ? `<a class="btn btn-wa ${cls}" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${I.wa}<span>${label}</span></a>`
       : `<button class="btn ${cls}" type="button" disabled>Out of stock</button>`;
@@ -22,10 +30,10 @@
       <nav class="crumbs" aria-label="Breadcrumb" style="padding-top:22px;opacity:.75"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/products">Products</a><span aria-hidden="true">/</span><a href="/category/${esc(p.category.slug)}">${esc(p.category.name)}</a></nav>
       <div class="pd">
         <div class="gallery">
-          <div class="g-main" id="gMain">${imgs.length ? `<img id="gImg" src="${esc(imgs[0])}" alt="${esc(p.name)}" width="900" height="900" fetchpriority="high">` : `<div class="p-ph" style="position:absolute;inset:0">${I.bag}</div>`}
-            ${imgs.length > 1 ? `<button class="g-arrow prev" type="button" aria-label="Previous photo">${I.left}</button><button class="g-arrow next" type="button" aria-label="Next photo">${I.right}</button>` : ''}
+          <div class="g-main${media[0] && media[0].type !== 'img' ? ' is-video' : ''}" id="gMain"><div class="g-slot" id="gSlot">${media.length ? mediaHtml(media[0]) : `<div class="p-ph" style="position:absolute;inset:0">${I.bag}</div>`}</div>
+            ${media.length > 1 ? `<button class="g-arrow prev" type="button" aria-label="Previous">${I.left}</button><button class="g-arrow next" type="button" aria-label="Next">${I.right}</button>` : ''}
           </div>
-          ${imgs.length > 1 ? `<div class="g-thumbs" id="gThumbs">${imgs.map((u, i) => `<button type="button" data-i="${i}" aria-label="Show photo ${i + 1}" ${i === 0 ? 'aria-current="true"' : ''}><img src="${esc(u)}" alt="" loading="lazy" width="72" height="72"></button>`).join('')}</div>` : ''}
+          ${media.length > 1 ? `<div class="g-thumbs" id="gThumbs">${media.map((m, i) => `<button type="button" data-i="${i}" aria-label="${m.type === 'img' ? 'Show photo ' + (i + 1) : 'Play video'}" ${i === 0 ? 'aria-current="true"' : ''}${m.type === 'img' ? '' : ' class="vid"'}>${m.type === 'img' ? `<img src="${esc(m.src)}" alt="" loading="lazy" width="72" height="72">` : `<span>${playIc}<br>Video</span>`}</button>`).join('')}</div>` : ''}
         </div>
         <div class="pd-info">
           <p class="p-cat"><a href="/category/${esc(p.category.slug)}">${esc(p.category.name)}</a></p>
@@ -46,18 +54,21 @@
       ${p.in_stock ? `<div class="buybar"><div class="bp"><strong>${B.money(p.price)}</strong><span>${esc([unit, qty].filter(Boolean).join(' · '))}</span></div>${buyBtn('', 'Buy on WhatsApp')}</div>` : ''}`;
 
     // gallery
-    if (imgs.length > 1) {
+    if (media.length > 1) {
       let i = 0;
-      const img = document.getElementById('gImg'), thumbs = document.getElementById('gThumbs');
+      const slot = document.getElementById('gSlot'), main = document.getElementById('gMain'), thumbs = document.getElementById('gThumbs');
       const show = n => {
-        i = (n + imgs.length) % imgs.length; img.src = imgs[i];
+        i = (n + media.length) % media.length;
+        const m = media[i], img = slot.querySelector('img');
+        if (m.type === 'img' && img) img.src = m.src; else slot.innerHTML = mediaHtml(m);
+        main.classList.toggle('is-video', m.type !== 'img');
         thumbs.querySelectorAll('button').forEach((b, k) => { if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
       };
       document.querySelector('.g-arrow.prev').addEventListener('click', () => show(i - 1));
       document.querySelector('.g-arrow.next').addEventListener('click', () => show(i + 1));
       thumbs.addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(+b.dataset.i); });
       let x0 = null; const m = document.getElementById('gMain');
-      m.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+      m.addEventListener('touchstart', e => { x0 = e.target.closest('video') ? null : e.touches[0].clientX; }, { passive: true });
       m.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1)); x0 = null; });
     }
 
