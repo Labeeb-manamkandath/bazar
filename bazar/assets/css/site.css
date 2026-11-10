@@ -434,3 +434,9 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
   .c-card.wa::after{width:130px;right:-52px;top:-52px}
   .cta-band::before{width:240px;right:-90px;top:-110px}
 }
+
+/* Offer banner slides: whole image always visible; a blurred copy fills any extra space (e.g. on phones) */
+.slide-img{overflow:hidden;background:#f4ead9}
+.slide-img>a{display:block;width:100%;height:100%;position:relative}
+.slide-img img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(40px);transform:scale(1.4);opacity:.7}
+.slide-img img.fg{position:relative;width:100%;height:100%;object-fit:contain}

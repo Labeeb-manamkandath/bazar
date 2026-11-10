@@ -7,16 +7,18 @@
     if (!list.length) return;
     const slides = document.getElementById('slides'), dots = document.getElementById('slDots');
     const prev = document.getElementById('slPrev'), next = document.getElementById('slNext');
-    const n = list.length;
-    slides.innerHTML = list.map((b, i) => {
-      const img = `<img src="${esc(b.image)}" alt="${esc(b.alt || 'Offer banner ' + (i + 1))}" width="1500" height="500" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async">`;
+    // The welcome banner always stays first; offer banners follow it.
+    const n = list.length + 1;
+    slides.querySelector('.slide-welcome').setAttribute('aria-label', `1 of ${n}`);
+    slides.insertAdjacentHTML('beforeend', list.map((b, i) => {
+      // Blurred copy behind, whole banner in front: nothing gets cut off when the slide is taller than 3:1 (phones).
+      const img = `<img class="bg" src="${esc(b.image)}" alt="" aria-hidden="true" loading="lazy" decoding="async"><img class="fg" src="${esc(b.image)}" alt="${esc(b.alt || 'Offer banner ' + (i + 1))}" width="1500" height="500" loading="lazy" decoding="async">`;
       const link = b.link ? `<a href="${esc(b.link)}"${isExternal(b.link) ? ' target="_blank" rel="noopener noreferrer"' : ''}>${img}</a>` : img;
-      return `<div class="slide" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${n}">${link}</div>`;
-    }).join('');
-    if (n < 2) return;
+      return `<div class="slide slide-img" role="group" aria-roledescription="slide" aria-label="${i + 2} of ${n}">${link}</div>`;
+    }).join(''));
 
     prev.hidden = next.hidden = dots.hidden = false;
-    dots.innerHTML = list.map((_, i) => `<button type="button" aria-label="Show banner ${i + 1}"${i ? '' : ' aria-current="true"'}></button>`).join('');
+    dots.innerHTML = Array.from({ length: n }, (_, i) => `<button type="button" aria-label="Show banner ${i + 1}"${i ? '' : ' aria-current="true"'}></button>`).join('');
     const dotBtns = [...dots.children];
     let cur = 0;
     const go = (i, smooth = true) => {
@@ -54,7 +56,7 @@
     const picks = [...c.home.popular_ids.map(id => c.byId[id]), ...c.products].filter((p, i, a) => p && p.images[0] && a.indexOf(p) === i).slice(0, 3);
     document.getElementById('welcomeArt').innerHTML = picks.map((p, i) => `<span class="sw-pic p${i + 1}"><img src="${esc(p.images[0])}" alt="" width="300" height="300" decoding="async"></span>`).join('');
 
-    // --- offer banners (max 4). With none, the welcome banner stays. ---
+    // --- offer banners (max 4), shown after the welcome banner ---
     banners(c.home.banners || []);
     document.getElementById('heroNumberText').textContent = h.number || B.SHOW_PHONE;
     document.getElementById('ctaNum').textContent = h.number || B.SHOW_PHONE;
