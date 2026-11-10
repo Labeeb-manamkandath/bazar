@@ -50,6 +50,10 @@
     document.getElementById('welcomeText').textContent = h.text;
     document.getElementById('pageTitle').textContent = 'Bazar by clickfor.in: ' + h.headline;
 
+    // --- welcome banner art: up to 3 product photos (Most Loved first) on the orange circle ---
+    const picks = [...c.home.popular_ids.map(id => c.byId[id]), ...c.products].filter((p, i, a) => p && p.images[0] && a.indexOf(p) === i).slice(0, 3);
+    document.getElementById('welcomeArt').innerHTML = picks.map((p, i) => `<span class="sw-pic p${i + 1}"><img src="${esc(p.images[0])}" alt="" width="300" height="300" decoding="async"></span>`).join('');
+
     // --- offer banners (max 4). With none, the welcome banner stays. ---
     banners(c.home.banners || []);
     document.getElementById('heroNumberText').textContent = h.number || B.SHOW_PHONE;

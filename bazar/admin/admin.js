@@ -478,9 +478,7 @@
       <div class="card"><h2>Offer banners</h2><p class="hint" style="margin-bottom:12px">Shown at the top of the homepage and slide every 5 seconds. Up to ${MAXB} banners. Best size: <b>1500 × 500 pixels</b> (3 : 1). Keep the text large and in the middle so it reads well on phones. With no banners, the welcome banner below is shown.</p>
         <div id="banList" class="ban-list"></div>
         <div class="ban-add"><button class="btn btn-sm btn-ghost" id="banAdd" type="button">${IC.plus} Add banner</button><span class="hint" id="banCount"></span></div></div>
-      <div class="card"><h2>Welcome banner and WhatsApp bar</h2><p class="hint" style="margin-bottom:12px">The headline and text show as the welcome banner when there are no offer banners. The number and button show in the WhatsApp bar under the banners.</p>
-        <div class="field" data-f="headline"><label for="h_head">Main headline *</label><input id="h_head" type="text" maxlength="120" value="${esc(h.hero.headline)}"><span class="hint">The word “WhatsApp” is highlighted in orange automatically.</span><span data-e></span></div>
-        <div class="field"><label for="h_text">Supporting text</label><textarea id="h_text" maxlength="300" style="min-height:80px">${esc(h.hero.text)}</textarea></div>
+      <div class="card"><h2>WhatsApp bar</h2><p class="hint" style="margin-bottom:12px">Shown under the banners on the homepage.</p>
         <div class="row"><div class="field"><label for="h_num">WhatsApp number shown on the banner</label><input id="h_num" type="text" maxlength="30" value="${esc(h.hero.number)}"><span class="hint">This is only the text customers see.</span></div>
           <div class="field" data-f="cta_text"><label for="h_cta">Button text *</label><input id="h_cta" type="text" maxlength="40" value="${esc(h.hero.cta_text)}"><span data-e></span></div></div>
         <div class="field" data-f="cta_url"><label for="h_url">Button destination</label><input id="h_url" type="text" maxlength="500" value="${esc(h.hero.cta_url)}"><span class="hint">A WhatsApp link (https://wa.me/…) or a page on the site like /products.</span><span data-e></span></div></div>
@@ -536,7 +534,7 @@
       const missing = bans.findIndex(b => !b.image);
       if (missing >= 0) { $('#hErr').textContent = 'Banner ' + (missing + 1) + ' has no image. Add an image or remove the banner.'; $('#hErr').hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
       const btn = $('#hSave'); btn.disabled = true; btn.textContent = 'Saving…';
-      const r = await api('home.save', { banners: bans.map(b => ({ image: b.image, link: b.link.trim(), alt: b.alt.trim() })), hero: { headline: $('#h_head').value, text: $('#h_text').value, number: $('#h_num').value, cta_text: $('#h_cta').value, cta_url: $('#h_url').value }, popular_ids: pop, category_ids: cats });
+      const r = await api('home.save', { banners: bans.map(b => ({ image: b.image, link: b.link.trim(), alt: b.alt.trim() })), hero: { headline: h.hero.headline, text: h.hero.text, number: $('#h_num').value, cta_text: $('#h_cta').value, cta_url: $('#h_url').value }, popular_ids: pop, category_ids: cats });
       btn.disabled = false; btn.textContent = 'Save and publish';
       if (!r.ok) { if (r.fields) Object.entries(r.fields).forEach(([k, m]) => { const f = v.querySelector(`[data-f="${k}"]`); if (f) { f.classList.add('invalid'); f.querySelector('[data-e]').innerHTML = `<span class="err">${esc(m)}</span>`; } }); $('#hErr').textContent = r.error; $('#hErr').hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
       await refresh(); dirty = false; $('#hState').textContent = 'All changes saved'; $('#hState').className = 'state clean'; toast('Saved. The homepage is updated.');

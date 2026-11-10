@@ -216,9 +216,8 @@ module.exports = async function handler(req, res) {
       const body = await U.readBody(req);
       const h = body.hero || {};
       const errors = {};
-      const headline = U.str(h.headline, 120), text = U.str(h.text, 300), number = U.str(h.number, 30), ctaText = U.str(h.cta_text, 40);
+      const headline = U.str(h.headline, 120) || U.DEFAULT_HOME.hero.headline, text = U.str(h.text, 300) || U.DEFAULT_HOME.hero.text, number = U.str(h.number, 30), ctaText = U.str(h.cta_text, 40);
       let ctaUrl = U.str(h.cta_url, 500);
-      if (!headline) errors.headline = 'Please enter a headline.';
       if (!ctaText) errors.cta_text = 'Please enter the button text.';
       if (!ctaUrl) ctaUrl = U.WA_GENERAL;
       if (!(U.isWaLink(ctaUrl) || /^\/[a-z0-9\-\/]*$/i.test(ctaUrl))) errors.cta_url = 'Use a WhatsApp link (https://wa.me/...) or a page like /products.';

@@ -151,7 +151,17 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 .slide-welcome{color:var(--rice);display:flex;align-items:center;overflow:hidden;isolation:isolate;padding:clamp(22px,4vw,48px) clamp(20px,5vw,64px)}
 .slide-welcome::before{content:"";position:absolute;left:0;right:0;top:0;height:12px;background:repeating-linear-gradient(90deg,var(--green-soft) 0 40px,var(--rice) 40px 80px);opacity:.9}
 .sw-sun{position:absolute;z-index:-1;right:-6%;top:50%;width:min(44%,460px);aspect-ratio:1;border-radius:50%;background:var(--orange);transform:translateY(-50%)}
-.sw-copy{max-width:min(62%,640px)}
+.sw-copy{max-width:min(58%,640px);position:relative;z-index:1}
+.sw-art{position:absolute;right:3%;top:50%;transform:translateY(-50%);width:min(40%,470px);aspect-ratio:1.45;pointer-events:none}
+.sw-pic{position:absolute;display:block;background:#fff;border-radius:18px;padding:6px;box-shadow:0 18px 34px -14px rgba(0,0,0,.55);animation:bob 6s ease-in-out infinite}
+.sw-pic img{display:block;width:100%;height:100%;object-fit:contain;border-radius:12px}
+.sw-pic.p1{width:44%;aspect-ratio:1;left:28%;top:6%;z-index:2}
+.sw-pic.p2{width:36%;aspect-ratio:1;left:0;top:36%;transform:rotate(-8deg);animation-delay:-2s}
+.sw-pic.p3{width:36%;aspect-ratio:1;right:0;top:34%;transform:rotate(8deg);animation-delay:-4s}
+.sw-pic.p2,.sw-pic.p3{animation-name:bobTilt}
+.sw-pic.p2{--r:-8deg}.sw-pic.p3{--r:8deg}
+@keyframes bobTilt{0%,100%{transform:rotate(var(--r))}50%{transform:rotate(var(--r)) translateY(-8px)}}
+@media (prefers-reduced-motion:reduce){.sw-pic{animation:none}}
 .sw-copy .eyebrow{margin-bottom:10px;font-size:.72rem}
 .sw-title{font-family:var(--font-display);font-weight:800;font-size:clamp(1.3rem,3.3vw,2.6rem);line-height:1.05;letter-spacing:-.02em;text-transform:uppercase;margin:0 0 10px;text-wrap:balance}
 .sw-title .hl{color:var(--orange)}
@@ -166,9 +176,18 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 @media (max-width:700px){
   .slider{border-radius:14px}
   .sl-btn{display:none}
-  .slide-welcome{aspect-ratio:auto;padding:26px 20px 24px}
-  .sw-copy{max-width:78%}
-  .sw-sun{width:58%;right:-26%}
+  .slide-welcome{aspect-ratio:auto;min-height:170px;padding:24px 16px 20px}
+  .sw-copy{max-width:56%}
+  .sw-copy .eyebrow{font-size:.6rem;margin-bottom:8px;letter-spacing:.12em}
+  .sw-title{font-size:1.12rem;margin:0}
+  .sw-text{display:none}
+  .sw-sun{width:58%;right:-22%}
+  .sw-art{right:-2%;width:44%}
+  .sw-pic{border-radius:12px;padding:3px}
+  .sw-pic img{border-radius:9px}
+  .sw-pic.p3{display:none}
+  .sw-pic.p1{width:56%;left:38%;top:0}
+  .sw-pic.p2{width:48%;left:2%;top:38%}
 }
 
 /* WhatsApp bar under the banners */
