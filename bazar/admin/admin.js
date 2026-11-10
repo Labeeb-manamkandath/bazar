@@ -473,7 +473,7 @@
     let dirty = false;
     const mark = () => { dirty = true; const s = $('#hState'); s.textContent = 'You have unsaved changes'; s.className = 'state dirty'; };
 
-    v.innerHTML = `<div class="page-title"><h1>Homepage</h1><a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">View website ${IC.ext}</a></div>
+    v.innerHTML = `<div class="page-title pinned"><h1>Homepage</h1><div class="pt-actions"><span class="state clean" id="hState">All changes saved</span><a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">View website ${IC.ext}</a><button class="btn btn-orange btn-sm" id="hSave" type="button">Save and publish</button></div></div>
       <p class="form-error" id="hErr" role="alert" hidden></p>
       <div class="card"><h2>Offer banners</h2><p class="hint" style="margin-bottom:12px">Shown at the top of the homepage and slide every 5 seconds. Up to ${MAXB} banners. Best size: <b>1500 × 500 pixels</b> (3 : 1). Keep the text large and in the middle so it reads well on phones. With no banners, the welcome banner below is shown.</p>
         <div id="banList" class="ban-list"></div>
@@ -486,7 +486,7 @@
         <div class="row" style="margin-top:12px;grid-template-columns:1fr auto"><select id="popAdd" aria-label="Add a product"></select><button class="btn btn-sm btn-ghost" id="popAddBtn" type="button">${IC.plus} Add</button></div></div>
       <div class="card"><h2>Categories on the homepage</h2><p class="hint" style="margin-bottom:12px">Choose which categories are shown and in what order. If the list is empty, all active categories are shown.</p><ul class="ol" id="catList"></ul>
         <div class="row" style="margin-top:12px;grid-template-columns:1fr auto"><select id="catAdd" aria-label="Add a category"></select><button class="btn btn-sm btn-ghost" id="catAddBtn" type="button">${IC.plus} Add</button></div></div>
-      <div class="savebar"><button class="btn btn-orange" id="hSave" type="button">Save and publish</button><span class="state clean" id="hState">All changes saved</span></div>`;
+`;
 
     const arrows = (id, i, n, k) => `<button class="icon-btn" data-${k}-up="${i}" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>${IC.up}</button><button class="icon-btn" data-${k}-dn="${i}" aria-label="Move down" ${i === n - 1 ? 'disabled' : ''}>${IC.down}</button><button class="icon-btn danger" data-${k}-rm="${i}" aria-label="Remove">${IC.close}</button>`;
     const draw = () => {

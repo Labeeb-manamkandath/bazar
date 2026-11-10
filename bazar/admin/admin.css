@@ -199,3 +199,16 @@ dialog.dlg::backdrop{background:rgba(18,41,21,.65)}
 .vid-up{cursor:pointer}
 .vid-bar{height:6px;border-radius:99px;background:var(--sand);overflow:hidden;margin-top:6px}
 .vid-bar i{display:block;height:100%;background:var(--orange);transition:width .2s}
+
+/* Pinned page header (title + Save + View website stay visible while scrolling) */
+.page-title.pinned{position:sticky;top:0;z-index:20;background:var(--paper);margin:calc(-1 * clamp(18px,3vw,36px)) calc(-1 * clamp(18px,3vw,36px)) 22px;padding:14px clamp(18px,3vw,36px);border-bottom:1.5px solid var(--line);box-shadow:0 10px 18px -16px rgba(0,0,0,.35)}
+.pt-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pt-actions .state{font-weight:700;font-size:.88rem}
+@media (max-width:900px){
+  .page-title.pinned{top:57px;padding-block:10px}
+  .page-title.pinned h1{font-size:1.2rem}
+  .pt-actions .state{width:100%;order:3;font-size:.8rem}
+}
+
+/* Dropdowns: our own arrow with proper spacing */
+select{appearance:none;-webkit-appearance:none;padding-right:42px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1.5 1.5l5.5 5.5 5.5-5.5' fill='none' stroke='%2334140A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:14px 9px;cursor:pointer;text-overflow:ellipsis}
