@@ -74,7 +74,7 @@
     }
 
     // --- most loved ---
-    const loved = c.home.popular_ids.map(id => c.byId[id]).filter(Boolean).slice(0, 8);
+    const loved = c.home.popular_ids.map(id => c.byId[id]).filter(Boolean).slice(0, 4);
     if (loved.length) {
       document.getElementById('loved').hidden = false;
       document.getElementById('lovedGrid').innerHTML = loved.map(B.productCard).join('');
