@@ -70,10 +70,7 @@
     if (cats.length) {
       document.getElementById('categories').hidden = false;
       document.getElementById('catGrid').innerHTML = cats.map(x => `
-        <a class="cat-tile" href="/category/${esc(x.slug)}">
-          <span class="pic">${x.image_url ? `<img src="${esc(x.image_url)}" alt="" loading="lazy" decoding="async" width="150" height="150">` : `<span class="ph">${esc(x.name.charAt(0).toUpperCase())}</span>`}</span>
-          <h3>${esc(x.name)}</h3><small>${x.count} product${x.count === 1 ? '' : 's'}</small>
-        </a>`).join('');
+        <a class="cat-tile" href="/category/${esc(x.slug)}"><h3>${esc(x.name)}</h3></a>`).join('');
     }
 
     // --- most loved ---

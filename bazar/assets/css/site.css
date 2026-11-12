@@ -216,15 +216,11 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 @media (max-width:760px){.steps ol{grid-template-columns:1fr;gap:14px;padding:18px 0}}
 
 /* ---------- Category tiles ---------- */
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,150px));gap:14px}
-.cat-tile{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 10px 12px;background:#fff;border:1.5px solid var(--line);border-radius:16px;text-decoration:none;color:var(--brown);text-align:center;transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease}
-.cat-tile:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:0 10px 20px -14px rgba(52,20,10,.4)}
-.cat-tile .pic{width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--sand);display:grid;place-items:center}
-.cat-tile .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.cat-tile .pic .ph{font:800 2rem var(--font-display);color:var(--brown);opacity:.5}
-.cat-tile h3{font-size:.9rem;font-weight:700;line-height:1.25}
-.cat-tile small{font-size:.74rem;opacity:.65;font-weight:600;margin-top:-6px}
-@media (max-width:640px){.cat-grid{grid-template-columns:repeat(4,1fr);gap:8px}.cat-tile{padding:6px 6px 8px;gap:6px;border-radius:12px}.cat-tile .pic{border-radius:9px}.cat-tile h3{font-size:.72rem}.cat-tile small{display:none}}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,180px));gap:12px}
+.cat-tile{display:flex;align-items:center;justify-content:center;min-height:58px;padding:10px 14px;background:#fff;border:1.5px solid var(--line);border-radius:14px;text-decoration:none;color:var(--brown);text-align:center;transition:border-color .2s ease,color .2s ease,transform .2s ease}
+.cat-tile:hover{border-color:var(--orange);color:var(--orange);transform:translateY(-2px)}
+.cat-tile h3{font-size:.92rem;font-weight:700;line-height:1.25}
+@media (max-width:640px){.cat-grid{grid-template-columns:repeat(3,1fr);gap:8px}.cat-tile{min-height:50px;padding:8px;border-radius:12px}.cat-tile h3{font-size:.8rem}}
 
 /* ---------- Product cards ---------- */
 .p-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
