@@ -189,6 +189,11 @@ module.exports = async function handler(req, res) {
       } else {
         const maxSort = cats.reduce((m, c) => Math.max(m, c.sort || 0), 0);
         saved = await db.insert('categories', { ...value, slug: await uniqueSlug('categories', U.slugify(name)), sort: maxSort + 1 });
+        // A new category also shows on the homepage straight away (it can be hidden or reordered under Homepage).
+        const home = await db.getSetting('home');
+        if (home && Array.isArray(home.category_ids) && home.category_ids.length && !home.category_ids.includes(saved.id)) {
+          await db.setSetting('home', { ...home, category_ids: [...home.category_ids, saved.id] });
+        }
       }
       return ok(res, { category: saved });
     }
