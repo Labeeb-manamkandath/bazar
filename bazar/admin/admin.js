@@ -403,7 +403,7 @@
   function categories(v) {
     const counts = {}; S.products.forEach(p => { counts[p.category_id] = (counts[p.category_id] || 0) + 1; });
     v.innerHTML = `<div class="page-title"><h1>Categories</h1><button class="btn btn-orange" id="addC" type="button">${IC.plus} Add category</button></div>
-      ${S.categories.length ? `<ul class="ol">${S.categories.slice().sort((a, b) => (a.sort || 0) - (b.sort || 0)).map((c, i, arr) => `<li>${thumb(c.image_url, c.name)}<div class="t">${esc(c.name)} ${c.active ? '' : '<span class="pill off">Hidden</span>'}<small>${counts[c.id] || 0} product${(counts[c.id] || 0) === 1 ? '' : 's'}${c.description ? ' · ' + esc(c.description) : ''}</small></div>
+      ${S.categories.length ? `<ul class="ol">${S.categories.slice().sort((a, b) => (a.sort || 0) - (b.sort || 0)).map((c, i, arr) => `<li><div class="t">${esc(c.name)} ${c.active ? '' : '<span class="pill off">Hidden</span>'}<small>${counts[c.id] || 0} product${(counts[c.id] || 0) === 1 ? '' : 's'}${c.description ? ' · ' + esc(c.description) : ''}</small></div>
         <button class="icon-btn" data-up="${c.id}" aria-label="Move ${esc(c.name)} up" ${i === 0 ? 'disabled' : ''}>${IC.up}</button><button class="icon-btn" data-dn="${c.id}" aria-label="Move ${esc(c.name)} down" ${i === arr.length - 1 ? 'disabled' : ''}>${IC.down}</button>
         <button class="icon-btn" data-edit="${c.id}" aria-label="Edit ${esc(c.name)}">${IC.edit}</button><button class="icon-btn danger" data-del="${c.id}" aria-label="Delete ${esc(c.name)}">${IC.trash}</button></li>`).join('')}</ul>` : `<div class="card empty"><h2>No categories yet</h2><p class="muted" style="margin-bottom:16px">Create categories like “Snacks” or “Rice & Grains”, then add products to them.</p></div>`}`;
     $('#addC').addEventListener('click', () => categoryForm(null));
@@ -422,21 +422,18 @@
 
   function categoryForm(c) {
     const isNew = !c; c = c || { active: true };
-    const items = c.image_url ? [{ url: c.image_url }] : [];
     openDlg(`<form id="cf" novalidate><div class="dlg-head"><h2>${isNew ? 'Add category' : 'Edit category'}</h2><button class="icon-btn" type="button" data-x aria-label="Close">${IC.close}</button></div>
       <div class="dlg-body"><p class="form-error" id="cfErr" role="alert" hidden></p>
         <div class="field" data-f="name"><label for="c_name">Category name *</label><input id="c_name" type="text" maxlength="60" value="${esc(c.name || '')}" required><span data-e></span></div>
         <div class="field"><label for="c_desc">Short description</label><input id="c_desc" type="text" maxlength="300" value="${esc(c.description || '')}"></div>
-        <div class="field"><span class="label">Category image</span><div id="cImg"></div></div>
         <label class="switch"><input type="checkbox" id="c_active" ${c.active !== false ? 'checked' : ''}><div><b>Active</b><span>Hidden categories and their products do not show on the website</span></div></label></div>
       <div class="dlg-foot"><button class="btn btn-ghost" type="button" data-x>Cancel</button><button class="btn btn-orange" type="submit" id="cfSave">${isNew ? 'Add category' : 'Save changes'}</button></div></form>`, 'sm');
-    const mgr = imageManager($('#cImg'), items, { max: 1, single: true });
     dlg.querySelectorAll('[data-x]').forEach(b => b.addEventListener('click', closeDlg));
     $('#cf').addEventListener('submit', async e => {
-      e.preventDefault(); if (mgr.busy()) return toast('Please wait for the photo to finish uploading.', true);
+      e.preventDefault();
       const f = $('#cf [data-f="name"]'); f.classList.remove('invalid'); f.querySelector('[data-e]').innerHTML = ''; $('#cfErr').hidden = true;
       const btn = $('#cfSave'); btn.disabled = true;
-      const body = { id: c.id, name: $('#c_name').value.trim(), description: $('#c_desc').value.trim(), image_url: items[0] ? items[0].url : '', active: $('#c_active').checked };
+      const body = { id: c.id, name: $('#c_name').value.trim(), description: $('#c_desc').value.trim(), image_url: c.image_url || '', active: $('#c_active').checked };
       if (c.sort) body.sort = c.sort;
       const r = await api('category.save', body); btn.disabled = false;
       if (!r.ok) { if (r.fields && r.fields.name) { f.classList.add('invalid'); f.querySelector('[data-e]').innerHTML = `<span class="err">${esc(r.fields.name)}</span>`; } $('#cfErr').textContent = r.error; $('#cfErr').hidden = false; return; }
@@ -491,7 +488,7 @@
     const arrows = (id, i, n, k) => `<button class="icon-btn" data-${k}-up="${i}" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>${IC.up}</button><button class="icon-btn" data-${k}-dn="${i}" aria-label="Move down" ${i === n - 1 ? 'disabled' : ''}>${IC.down}</button><button class="icon-btn danger" data-${k}-rm="${i}" aria-label="Remove">${IC.close}</button>`;
     const draw = () => {
       $('#popList').innerHTML = pop.length ? pop.map((id, i) => { const p = S.products.find(x => x.id === id); return p ? `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${priceLine(p)}${p.status === 'inactive' ? ' · Inactive (hidden)' : ''}</small></div>${arrows(id, i, pop.length, 'p')}</li>` : ''; }).join('') : '<li><div class="t muted">No products yet. Add some below.</div></li>';
-      $('#catList').innerHTML = cats.length ? cats.map((id, i) => { const c = S.categories.find(x => x.id === id); return c ? `<li>${thumb(c.image_url, c.name)}<div class="t">${esc(c.name)}</div>${arrows(id, i, cats.length, 'c')}</li>` : ''; }).join('') : '<li><div class="t muted">Empty: all active categories will be shown.</div></li>';
+      $('#catList').innerHTML = cats.length ? cats.map((id, i) => { const c = S.categories.find(x => x.id === id); return c ? `<li><div class="t">${esc(c.name)}</div>${arrows(id, i, cats.length, 'c')}</li>` : ''; }).join('') : '<li><div class="t muted">Empty: all active categories will be shown.</div></li>';
       const pa = S.products.filter(p => !pop.includes(p.id)); $('#popAdd').innerHTML = pa.length ? pa.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">All products are already added</option>'; $('#popAddBtn').disabled = !pa.length;
       const ca = S.categories.filter(c => !cats.includes(c.id)); $('#catAdd').innerHTML = ca.length ? ca.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('') : '<option value="">All categories are already added</option>'; $('#catAddBtn').disabled = !ca.length;
     };
