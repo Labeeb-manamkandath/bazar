@@ -89,7 +89,7 @@
   });
 
   /* ---------- shell ---------- */
-  const NAV = [['dashboard', 'Dashboard', IC.home], ['products', 'Products', IC.box], ['categories', 'Categories', IC.tag], ['homepage', 'Homepage', IC.layout], ['policies', 'Policies', IC.doc], ['account', 'Account', IC.user]];
+  const NAV = [['dashboard', 'Dashboard', IC.home], ['categories', 'Categories', IC.tag], ['products', 'Products', IC.box], ['homepage', 'Homepage', IC.layout], ['policies', 'Policies', IC.doc], ['account', 'Account', IC.user]];
   const route = () => (location.hash.replace(/^#\/?/, '') || 'dashboard').split('?')[0];
 
   function shell() {
@@ -130,11 +130,11 @@
       ${missing.length ? `<div class="warn"><span><b>${missing.length} product${missing.length > 1 ? 's are' : ' is'} missing a WhatsApp catalogue link.</b> Customers will get a WhatsApp message with the product name instead of the catalogue page.</span><a class="btn btn-sm btn-orange" href="#/products" data-filter="missing">Show them</a></div>` : ''}
       <div class="card"><h2>Quick actions</h2><div class="actions">
         <button class="action" data-go="new"><span class="ai">${IC.plus}</span>Add New Product</button>
-        <a class="action" href="#/products"><span class="ai">${IC.box}</span>Manage Products</a>
         <a class="action" href="#/categories"><span class="ai">${IC.tag}</span>Manage Categories</a>
+        <a class="action" href="#/products"><span class="ai">${IC.box}</span>Manage Products</a>
         <a class="action" href="#/homepage"><span class="ai">${IC.layout}</span>Manage Homepage</a>
         <a class="action" href="#/policies"><span class="ai">${IC.doc}</span>Manage Policies</a></div></div>
-      <div class="card"><h2>Recently added</h2>${recent.length ? `<ul class="ol">${recent.map(p => `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${esc(catName(p.category_id))} · ${priceLine(p)} · added ${fdate(p.created_at)}</small></div><button class="btn btn-sm btn-ghost" data-edit="${p.id}">Edit</button></li>`).join('')}</ul>` : `<div class="empty"><h2>No products yet</h2><p class="muted">Add your first product to show it on the website.</p><button class="btn btn-orange" id="seedBtn" type="button">Import starter products</button></div>`}</div>`;
+      <div class="card"><div class="card-head"><h2>Recently added</h2>${recent.length ? `<a class="btn btn-sm btn-ghost" href="#/products" id="viewAllP">View all products</a>` : ''}</div>${recent.length ? `<ul class="ol">${recent.map(p => `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${esc(catName(p.category_id))} · ${priceLine(p)} · added ${fdate(p.created_at)}</small></div><button class="btn btn-sm btn-ghost" data-edit="${p.id}">Edit</button></li>`).join('')}</ul>` : `<div class="empty"><h2>No products yet</h2><p class="muted">Add your first product to show it on the website.</p><button class="btn btn-orange" id="seedBtn" type="button">Import starter products</button></div>`}</div>`;
     const fl = v.querySelector('#fixLinks');
     if (fl) fl.addEventListener('click', async () => {
       fl.disabled = true; fl.textContent = 'Fixing…';
@@ -151,6 +151,7 @@
       await refresh(); render(); toast(`Done. Added ${r.added_categories} categories and ${r.added_products} products.`);
     });
     v.querySelector('[data-go="new"]').addEventListener('click', () => productForm(null));
+    const va = $('#viewAllP'); if (va) va.addEventListener('click', () => { ui.q = ''; ui.cat = ''; ui.status = ''; ui.sort = 'new'; });
     v.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => productForm(S.products.find(p => p.id === b.dataset.edit))));
     const f = v.querySelector('[data-filter]'); if (f) f.addEventListener('click', () => { ui.status = 'missing'; });
   }
