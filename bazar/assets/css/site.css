@@ -176,13 +176,18 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 @media (max-width:700px){
   .slider{border-radius:14px}
   .sl-btn{display:none}
-  .slide-welcome{aspect-ratio:auto;min-height:170px;padding:24px 16px 20px}
+  .slide-welcome{aspect-ratio:3/1;min-height:0;padding:14px 14px 12px}
+  .slide-welcome::before{height:6px}
+  .sl-dots{bottom:5px}
+  .sl-dots button{width:7px;height:7px}
+  .sl-dots button[aria-current="true"]{width:18px}
+  .sw-copy{padding-bottom:6px}
   .sw-copy{max-width:56%}
-  .sw-copy .eyebrow{font-size:.6rem;margin-bottom:8px;letter-spacing:.12em}
-  .sw-title{font-size:1.12rem;margin:0}
+  .sw-copy .eyebrow{font-size:.52rem;margin-bottom:4px;letter-spacing:.1em}
+  .sw-title{font-size:clamp(.82rem,3.9vw,1.05rem);margin:0;line-height:1.08}
   .sw-text{display:none}
   .sw-sun{width:58%;right:-22%}
-  .sw-art{right:-2%;width:44%}
+  .sw-art{right:-2%;width:42%}
   .sw-pic{border-radius:12px;padding:3px}
   .sw-pic img{border-radius:9px}
   .sw-pic.p3{display:none}
