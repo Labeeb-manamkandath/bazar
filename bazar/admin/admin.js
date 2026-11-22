@@ -17,7 +17,7 @@
 
   let S = null;                       // data from the server
   let me = null;
-  const ui = { q: '', cat: '', status: '' };
+  const ui = { q: '', cat: '', status: '', sort: 'new' };
 
   /* ---------- api ---------- */
   async function api(action, body) {
@@ -161,19 +161,32 @@
     return S.products.filter(p =>
       (!q || p.name.toLowerCase().includes(q)) && (!ui.cat || p.category_id === ui.cat) &&
       (!ui.status || (ui.status === 'missing' ? !p.wa_link : ui.status === 'popular' ? p.popular : ui.status === 'oos' ? !p.in_stock : p.status === ui.status)))
-      .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      .sort(SORTS[ui.sort] || SORTS.new);
   }
+  // Product list order. "Recently added" is the default, so new products are always at the top.
+  const ts = d => new Date(d || 0).getTime();
+  const SORTS = {
+    new: (a, b) => ts(b.created_at) - ts(a.created_at),
+    updated: (a, b) => ts(b.updated_at) - ts(a.updated_at),
+    old: (a, b) => ts(a.created_at) - ts(b.created_at),
+    az: (a, b) => a.name.localeCompare(b.name),
+    za: (a, b) => b.name.localeCompare(a.name),
+    plh: (a, b) => (+a.price || 0) - (+b.price || 0),
+    phl: (a, b) => (+b.price || 0) - (+a.price || 0),
+  };
 
   function products(v) {
     v.innerHTML = `<div class="page-title"><h1>Products</h1><button class="btn btn-orange" id="addP" type="button">${IC.plus} Add product</button></div>
       <div class="filters"><input type="search" id="fq" placeholder="Search products" aria-label="Search products" value="${esc(ui.q)}">
         <select id="fc" aria-label="Filter by category"><option value="">All categories</option>${S.categories.map(c => `<option value="${c.id}" ${ui.cat === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
-        <select id="fs" aria-label="Filter by status">${[['', 'All products'], ['active', 'Active'], ['inactive', 'Inactive'], ['popular', 'Most loved'], ['oos', 'Out of stock'], ['missing', 'Missing WhatsApp link']].map(o => `<option value="${o[0]}" ${ui.status === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+        <select id="fs" aria-label="Filter by status">${[['', 'All products'], ['active', 'Active'], ['inactive', 'Inactive'], ['popular', 'Most loved'], ['oos', 'Out of stock'], ['missing', 'Missing WhatsApp link']].map(o => `<option value="${o[0]}" ${ui.status === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
+        <select id="fo" aria-label="Sort products">${[['new', 'Recently added'], ['updated', 'Recently updated'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['plh', 'Price: low to high'], ['phl', 'Price: high to low']].map(o => `<option value="${o[0]}" ${ui.sort === o[0] ? 'selected' : ''}>Sort: ${o[1]}</option>`).join('')}</select></div>
       <div id="plist"></div>`;
     $('#addP').addEventListener('click', () => productForm(null));
     $('#fq').addEventListener('input', e => { ui.q = e.target.value; drawProducts(); });
     $('#fc').addEventListener('change', e => { ui.cat = e.target.value; drawProducts(); });
     $('#fs').addEventListener('change', e => { ui.status = e.target.value; drawProducts(); });
+    $('#fo').addEventListener('change', e => { ui.sort = e.target.value; drawProducts(); });
     drawProducts();
   }
 
