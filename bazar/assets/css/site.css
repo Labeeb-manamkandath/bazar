@@ -217,12 +217,12 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 
 /* ---------- Category tiles ---------- */
 .cat-strip{padding-block:22px}
-.cat-grid{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding-block:4px}
+.cat-grid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding-block:4px}
 .cat-grid::-webkit-scrollbar{display:none}
-.cat-tile{flex:0 0 170px;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;height:84px;padding:10px 14px;background:#fff;border:1.5px solid var(--line);border-radius:14px;text-decoration:none;color:var(--brown);text-align:center;transition:border-color .2s ease,color .2s ease,transform .2s ease}
+.cat-tile{flex:0 0 140px;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;height:58px;padding:8px 12px;background:#fff;border:1.5px solid var(--line);border-radius:14px;text-decoration:none;color:var(--brown);text-align:center;transition:border-color .2s ease,color .2s ease,transform .2s ease}
 .cat-tile:hover{border-color:var(--orange);color:var(--orange);transform:translateY(-2px)}
-.cat-tile h3{font-size:.92rem;font-weight:700;line-height:1.25}
-@media (max-width:640px){.cat-strip{padding-block:16px}.cat-grid{gap:8px}.cat-tile{flex-basis:118px;height:68px;padding:8px;border-radius:12px}.cat-tile h3{font-size:.8rem}}
+.cat-tile h3{font-family:var(--font-body);font-size:.88rem;font-weight:500;line-height:1.25;letter-spacing:0}
+@media (max-width:640px){.cat-strip{padding-block:16px}.cat-grid{gap:8px}.cat-tile{flex-basis:100px;height:48px;padding:6px 8px;border-radius:10px}.cat-tile h3{font-size:.76rem}}
 
 /* ---------- Product cards ---------- */
 .p-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
