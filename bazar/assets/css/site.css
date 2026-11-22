@@ -438,3 +438,9 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 .p-body .p-cat{font-size:.66rem;letter-spacing:.08em}
 @media (min-width:901px){.p-card .p-name{font-size:1.14rem}}
 @media (max-width:640px){.p-body .p-cat{font-size:.58rem;letter-spacing:.06em}}
+
+/* Products page: category strip used as a filter */
+.cat-filter{margin:18px 0 6px}
+button.cat-tile{font:inherit;cursor:pointer}
+.cat-tile[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.cat-tile[aria-pressed="true"]:hover{color:#fff;transform:none}

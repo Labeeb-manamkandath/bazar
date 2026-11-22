@@ -53,6 +53,7 @@
     $('qClear').hidden = !state.q;
     $('sort').value = state.sort;
     $('filter').value = state.popular ? 'popular' : state.cat ? 'cat:' + state.cat : 'all';
+    $('catStrip').querySelectorAll('.cat-tile').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === state.cat && !(state.popular && !state.cat))));
     if (!catalog.products.length) {
       $('grid').innerHTML = B.emptyProducts({ title: 'The shelves are being stocked', text: 'New products are being added. Message us on WhatsApp to ask what is available.' }, false);
     } else if (!list.length) {
@@ -68,6 +69,14 @@
     catalog = c; readUrl();
     $('filter').insertAdjacentHTML('beforeend', c.categories.map(x => `<option value="cat:${esc(x.id)}">${esc(x.name)}</option>`).join(''));
     $('q').value = state.q;
+    // Category strip (same boxes as the homepage). "All" is selected by default.
+    const cats = c.categories.filter(x => x.count);
+    $('catStrip').innerHTML = [{ id: '', name: 'All' }, ...cats].map(x => `<button class="cat-tile" type="button" data-cat="${esc(x.id)}" aria-pressed="false"><h3>${esc(x.name)}</h3></button>`).join('');
+    $('catStrip').addEventListener('click', e => {
+      const b = e.target.closest('.cat-tile'); if (!b) return;
+      state.cat = b.dataset.cat; state.popular = false; update();
+      b.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    });
     $('filter').addEventListener('change', e => {
       const v = e.target.value;
       state.popular = v === 'popular';
