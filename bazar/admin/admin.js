@@ -133,7 +133,8 @@
         <a class="action" href="#/categories"><span class="ai">${IC.tag}</span>Manage Categories</a>
         <a class="action" href="#/products"><span class="ai">${IC.box}</span>Manage Products</a>
         <a class="action" href="#/homepage"><span class="ai">${IC.layout}</span>Manage Homepage</a>
-        <a class="action" href="#/policies"><span class="ai">${IC.doc}</span>Manage Policies</a></div></div>
+        <a class="action" href="#/policies"><span class="ai">${IC.doc}</span>Manage Policies</a>
+        <a class="action" href="/admin/menu" target="_blank" rel="noopener"><span class="ai">${IC.doc}</span>Download Menu (PDF)</a></div></div>
       <div class="card"><div class="card-head"><h2>Recently added</h2>${recent.length ? `<a class="btn btn-sm btn-ghost" href="#/products" id="viewAllP">View all products</a>` : ''}</div>${recent.length ? `<ul class="ol">${recent.map(p => `<li>${thumb(p.images[0], p.name)}<div class="t">${esc(p.name)}<small>${esc(catName(p.category_id))} · ${priceLine(p)} · added ${fdate(p.created_at)}</small></div><button class="btn btn-sm btn-ghost" data-edit="${p.id}">Edit</button></li>`).join('')}</ul>` : `<div class="empty"><h2>No products yet</h2><p class="muted">Add your first product to show it on the website.</p><button class="btn btn-orange" id="seedBtn" type="button">Import starter products</button></div>`}</div>`;
     const fl = v.querySelector('#fixLinks');
     if (fl) fl.addEventListener('click', async () => {
@@ -177,7 +178,7 @@
   };
 
   function products(v) {
-    v.innerHTML = `<div class="page-title"><h1>Products</h1><div class="pt-actions"><a class="btn btn-ghost" href="/admin/menu.html" target="_blank" rel="noopener" title="Opens a printable menu of all products. Choose Save as PDF.">${IC.doc} Download menu (PDF)</a><button class="btn btn-orange" id="addP" type="button">${IC.plus} Add product</button></div></div>
+    v.innerHTML = `<div class="page-title"><h1>Products</h1><div class="pt-actions"><a class="btn btn-ghost" href="/admin/menu" target="_blank" rel="noopener" title="Opens a printable menu of all products. Choose Save as PDF.">${IC.doc} Download menu (PDF)</a><button class="btn btn-orange" id="addP" type="button">${IC.plus} Add product</button></div></div>
       <div class="filters"><input type="search" id="fq" placeholder="Search products" aria-label="Search products" value="${esc(ui.q)}">
         <select id="fc" aria-label="Filter by category"><option value="">All categories</option>${S.categories.map(c => `<option value="${c.id}" ${ui.cat === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
         <select id="fs" aria-label="Filter by status">${[['', 'All products'], ['active', 'Active'], ['inactive', 'Inactive'], ['popular', 'Most loved'], ['oos', 'Out of stock'], ['missing', 'Missing WhatsApp link']].map(o => `<option value="${o[0]}" ${ui.status === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
