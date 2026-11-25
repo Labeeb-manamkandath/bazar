@@ -161,7 +161,7 @@
   function filteredProducts() {
     const q = ui.q.trim().toLowerCase();
     return S.products.filter(p =>
-      (!q || p.name.toLowerCase().includes(q)) && (!ui.cat || p.category_id === ui.cat) &&
+      (!q || p.name.toLowerCase().includes(q) || (p.name_ml || '').includes(ui.q.trim())) && (!ui.cat || p.category_id === ui.cat) &&
       (!ui.status || (ui.status === 'missing' ? !p.wa_link : ui.status === 'popular' ? p.popular : ui.status === 'oos' ? !p.in_stock : p.status === ui.status)))
       .sort(SORTS[ui.sort] || SORTS.new);
   }
@@ -183,12 +183,21 @@
         <select id="fc" aria-label="Filter by category"><option value="">All categories</option>${S.categories.map(c => `<option value="${c.id}" ${ui.cat === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
         <select id="fs" aria-label="Filter by status">${[['', 'All products'], ['active', 'Active'], ['inactive', 'Inactive'], ['popular', 'Most loved'], ['oos', 'Out of stock'], ['missing', 'Missing WhatsApp link']].map(o => `<option value="${o[0]}" ${ui.status === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
         <select id="fo" aria-label="Sort products">${[['new', 'Recently added'], ['updated', 'Recently updated'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['plh', 'Price: low to high'], ['phl', 'Price: high to low']].map(o => `<option value="${o[0]}" ${ui.sort === o[0] ? 'selected' : ''}>Sort: ${o[1]}</option>`).join('')}</select></div>
+      <div class="card mlset"><div><h2>Malayalam names</h2><p class="hint">Add a Malayalam name to each product (optional). English stays the main name.</p></div>
+        <label class="switch"><input type="checkbox" id="mlSite" ${S.display && S.display.ml_site ? 'checked' : ''}><div><b>Show on the website</b><span>Malayalam name appears under the English name on product cards and pages</span></div></label>
+        <div class="field"><label for="mlMenu">Names in the downloaded menu</label><select id="mlMenu">${[['ml', 'Malayalam first, English below'], ['both', 'English first, Malayalam below'], ['en', 'English only']].map(o => `<option value="${o[0]}" ${(S.display ? S.display.menu_names : 'ml') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
       <div id="plist"></div>`;
     $('#addP').addEventListener('click', () => productForm(null));
     $('#fq').addEventListener('input', e => { ui.q = e.target.value; drawProducts(); });
     $('#fc').addEventListener('change', e => { ui.cat = e.target.value; drawProducts(); });
     $('#fs').addEventListener('change', e => { ui.status = e.target.value; drawProducts(); });
     $('#fo').addEventListener('change', e => { ui.sort = e.target.value; drawProducts(); });
+    const saveDisplay = async () => {
+      const r = await api('display.save', { ml_site: $('#mlSite').checked, menu_names: $('#mlMenu').value });
+      if (r.ok) { S.display = r.display; toast('Saved. The website is updated.'); } else toast(r.error || 'Could not save.', true);
+    };
+    $('#mlSite').addEventListener('change', saveDisplay);
+    $('#mlMenu').addEventListener('change', saveDisplay);
     drawProducts();
   }
 
@@ -204,7 +213,7 @@
     if (!S.products.length) { box.innerHTML = `<div class="card empty"><h2>No products yet</h2><p class="muted" style="margin-bottom:16px">Add your first product. It will appear on the website right away.</p><button class="btn btn-orange" id="addP2" type="button">${IC.plus} Add product</button></div>`; $('#addP2').addEventListener('click', () => productForm(null)); return; }
     if (!list.length) { box.innerHTML = `<div class="card empty"><h2>No products match</h2><p class="muted">Try a different search or filter.</p></div>`; return; }
     box.innerHTML = `<div class="card tblcard" style="padding:6px 8px"><table class="tbl"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Status</th><th>Updated</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${list.map(p => `<tr>
-        <td><div class="pname">${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b><small>${esc(qtyLine(p))}</small></div></div></td>
+        <td><div class="pname">${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b>${p.name_ml ? `<small lang="ml">${esc(p.name_ml)}</small>` : ''}<small>${esc(qtyLine(p))}</small></div></div></td>
         <td>${esc(catName(p.category_id))}</td><td><b>${priceLine(p)}</b></td><td><div style="display:flex;gap:6px;flex-wrap:wrap">${pills(p)}</div></td><td>${fdate(p.updated_at)}</td>
         <td><div class="row-actions"><button class="icon-btn" data-edit="${p.id}" aria-label="Edit ${esc(p.name)}" title="Edit">${IC.edit}</button><button class="icon-btn danger" data-del="${p.id}" aria-label="Delete ${esc(p.name)}" title="Delete">${IC.trash}</button></div></td></tr>`).join('')}</tbody></table></div>
       <div class="cards">${list.map(p => `<div class="pc">${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b><div class="small muted">${esc(catName(p.category_id))} · ${priceLine(p)}${qtyLine(p) ? ' · ' + esc(qtyLine(p)) : ''}</div><div class="meta">${pills(p)}</div><div class="small muted">Updated ${fdate(p.updated_at)}</div></div>
@@ -308,6 +317,7 @@
       <div class="dlg-body">
         <p class="form-error" id="pfErr" role="alert" hidden></p>
         <div class="field" data-f="name"><label for="f_name">Product name *</label><input id="f_name" type="text" maxlength="120" value="${esc(p.name || '')}" required><span data-e></span></div>
+        <div class="field"><label for="f_ml">Malayalam name (optional)</label><input id="f_ml" type="text" lang="ml" maxlength="150" value="${esc(p.name_ml || '')}" placeholder="ഉദാ: നാടൻ നെയ്യ്"><span class="hint">Shown under the English name when Malayalam names are switched on, and in the downloaded menu.</span></div>
         <div class="field" data-f="category_id"><label for="f_cat">Category *</label>
           <select id="f_cat"><option value="">Choose a category</option>${S.categories.map(c => `<option value="${c.id}" ${c.id === p.category_id ? 'selected' : ''}>${esc(c.name)}${c.active ? '' : ' (hidden)'}</option>`).join('')}<option value="__new">+ Create a new category…</option></select>
           <div id="newCat" hidden style="display:none;gap:8px;margin-top:6px"><input id="newCatName" type="text" maxlength="60" placeholder="New category name"><button class="btn btn-sm btn-green" id="newCatAdd" type="button">Add</button></div><span data-e></span></div>
@@ -395,7 +405,7 @@
       $$('[data-f]', form).forEach(f => { f.classList.remove('invalid'); const s = f.querySelector('[data-e]'); if (s) s.innerHTML = ''; });
       $('#pfErr').hidden = true;
       const body = {
-        id: p.id, name: $('#f_name').value.trim(), category_id: catSel.value === '__new' ? '' : catSel.value, price: $('#f_price').value,
+        id: p.id, name: $('#f_name').value.trim(), name_ml: $('#f_ml').value.trim(), category_id: catSel.value === '__new' ? '' : catSel.value, price: $('#f_price').value,
         price_unit: $('#f_pu').value, quantity_value: $('#f_qv').value.trim(), quantity_unit: $('#f_qu').value, description: $('#f_desc').value.trim(),
         images: items.map(i => i.url), video: vidIn.value.trim(), wa_link: $('#f_wa').value.trim(), status: $('#f_active').checked ? 'active' : 'inactive',
         in_stock: $('#f_stock').checked, popular: $('#f_pop').checked, featured: $('#f_feat').checked,

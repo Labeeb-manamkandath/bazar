@@ -40,12 +40,14 @@
   }
 
   /* ---------- data ---------- */
-  let catalogPromise = null;
+  let catalogPromise = null, DISPLAY = {};
+  // Malayalam name under the English name, when switched on in the admin.
+  const mlName = (p, cls) => DISPLAY.ml_site && p.name_ml ? `<p class="${cls}" lang="ml">${esc(p.name_ml)}</p>` : '';
   function getCatalog() {
     if (!catalogPromise) {
       catalogPromise = fetch('/api/public?r=catalog', { headers: { Accept: 'application/json' } })
         .then(r => { if (!r.ok) throw new Error('catalog ' + r.status); return r.json(); })
-        .then(c => { c.byId = Object.fromEntries(c.products.map(p => [p.id, p])); return c; });
+        .then(c => { c.byId = Object.fromEntries(c.products.map(p => [p.id, p])); DISPLAY = c.display || {}; return c; });
     }
     return catalogPromise;
   }
@@ -65,7 +67,7 @@
       <div style="position:relative">${media}<div class="badges">${badges}</div></div>
       <div class="p-body">
         <span class="p-cat">${esc(p.category ? p.category.name : '')}</span>
-        <h3 class="p-name"><a href="/products/${esc(p.slug)}">${esc(p.name)}</a></h3>
+        <h3 class="p-name"><a href="/products/${esc(p.slug)}">${esc(p.name)}</a></h3>${mlName(p, 'p-ml')}
         ${q ? `<span class="p-qty">${esc(q)}</span>` : ''}
         <div class="p-price"><strong>${money(p.price)}</strong>${priceUnitHtml(p)}</div>
         ${buy}
@@ -171,5 +173,5 @@
     return getCatalog();
   }
 
-  window.Bazar = { boot, getCatalog, productCard, emptyProducts, buyUrl, money, qtyText, unitText, esc, ICON, WA_GENERAL, WA_PHONE, SHOW_PHONE, SITE };
+  window.Bazar = { mlName, boot, getCatalog, productCard, emptyProducts, buyUrl, money, qtyText, unitText, esc, ICON, WA_GENERAL, WA_PHONE, SHOW_PHONE, SITE };
 })();

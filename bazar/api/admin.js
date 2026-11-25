@@ -68,9 +68,9 @@ module.exports = async function handler(req, res) {
         const s = settings['policy_' + k];
         policies[k] = s || { draft: U.DEFAULT_POLICIES[k], published: U.DEFAULT_POLICIES[k], published_at: null, is_default: true };
       });
-      const videos = settings.product_videos || {};
-      products.forEach(p => { p.video = videos[p.id] || ''; });
-      return ok(res, { categories, products, home: { ...U.DEFAULT_HOME, ...(settings.home || {}), hero: { ...U.DEFAULT_HOME.hero, ...((settings.home || {}).hero || {}) } }, policies, user: session.u });
+      const videos = settings.product_videos || {}, ml = settings.product_ml || {};
+      products.forEach(p => { p.video = videos[p.id] || ''; p.name_ml = ml[p.id] || ''; });
+      return ok(res, { categories, products, display: U.cleanDisplay(settings.display), home: { ...U.DEFAULT_HOME, ...(settings.home || {}), hero: { ...U.DEFAULT_HOME.hero, ...((settings.home || {}).hero || {}) } }, policies, user: session.u });
     }
 
     /* ---------- one-time starter import (categories, products, photos) ---------- */
@@ -142,7 +142,14 @@ module.exports = async function handler(req, res) {
         if (vid.value) videos[saved.id] = vid.value; else delete videos[saved.id];
         await db.setSetting('product_videos', videos);
       }
-      return ok(res, { product: { ...saved, video: vid.value } });
+      // Malayalam names also live in settings: { productId: "മലയാളം" }
+      const mls = (await db.getSetting('product_ml')) || {};
+      const nameMl = 'name_ml' in body ? U.str(body.name_ml, 150) : (mls[saved.id] || '');   // left out = keep as is
+      if ((mls[saved.id] || '') !== nameMl) {
+        if (nameMl) mls[saved.id] = nameMl; else delete mls[saved.id];
+        await db.setSetting('product_ml', mls);
+      }
+      return ok(res, { product: { ...saved, video: vid.value, name_ml: nameMl } });
     }
 
     if (action === 'product.patch' && isPost) {
@@ -161,6 +168,8 @@ module.exports = async function handler(req, res) {
       await db.remove('products', body.id);
       const videos = (await db.getSetting('product_videos')) || {};
       if (videos[body.id]) { delete videos[body.id]; await db.setSetting('product_videos', videos); }
+      const mls = (await db.getSetting('product_ml')) || {};
+      if (mls[body.id]) { delete mls[body.id]; await db.setSetting('product_ml', mls); }
       const home = (await db.getSetting('home')) || {};
       if (Array.isArray(home.popular_ids) && home.popular_ids.includes(body.id)) {
         await db.setSetting('home', { ...home, popular_ids: home.popular_ids.filter(i => i !== body.id) });
@@ -239,6 +248,14 @@ module.exports = async function handler(req, res) {
         if (!!p.popular !== want) await db.update('products', p.id, { popular: want });
       }
       return ok(res, { home });
+    }
+
+    /* ---------- display settings (Malayalam names) ---------- */
+    if (action === 'display.save' && isPost) {
+      const body = await U.readBody(req, 2000);
+      const display = U.cleanDisplay(body);
+      await db.setSetting('display', display);
+      return ok(res, { display });
     }
 
     /* ---------- policies ---------- */

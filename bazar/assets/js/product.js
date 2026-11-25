@@ -37,7 +37,7 @@
         </div>
         <div class="pd-info">
           <p class="p-cat"><a href="/category/${esc(p.category.slug)}">${esc(p.category.name)}</a></p>
-          <h1>${esc(p.name)}</h1>
+          <h1>${esc(p.name)}</h1>${B.mlName(p, 'pd-ml')}
           <div class="pd-price"><strong>${B.money(p.price)}</strong>${unit ? `<span>${esc(unit)}</span>` : ''}</div>
           <div class="facts">
             ${qty ? `<div class="fact"><b>Quantity</b>${esc(qty)}</div>` : ''}

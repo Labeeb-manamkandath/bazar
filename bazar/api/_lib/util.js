@@ -83,6 +83,13 @@ function cleanProduct(b, existing) {
   };
 }
 
+// Malayalam names: show on the website (on/off) and how names appear in the downloadable menu.
+const MENU_NAMES = ['ml', 'both', 'en'];
+function cleanDisplay(d) {
+  d = d || {};
+  return { ml_site: d.ml_site === true, menu_names: MENU_NAMES.includes(d.menu_names) ? d.menu_names : 'ml' };
+}
+
 const DEFAULT_HOME = {
   hero: {
     headline: 'Your favourites are just one WhatsApp away!',
@@ -165,4 +172,4 @@ function cleanVideo(v, storagePublic) {
   return { value: '', error: 'Use a YouTube link, or upload a video file.' };
 }
 
-module.exports = { youtubeId, cleanVideo, cleanBanners, MAX_BANNERS, isSiteLink, send, readBody, slugify, str, cleanProduct, cleanSections, isWaLink, isImageUrl, DEFAULT_HOME, DEFAULT_POLICIES, WA_GENERAL, WA_PHONE, PRICE_UNITS };
+module.exports = { cleanDisplay, MENU_NAMES, youtubeId, cleanVideo, cleanBanners, MAX_BANNERS, isSiteLink, send, readBody, slugify, str, cleanProduct, cleanSections, isWaLink, isImageUrl, DEFAULT_HOME, DEFAULT_POLICIES, WA_GENERAL, WA_PHONE, PRICE_UNITS };

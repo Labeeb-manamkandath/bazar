@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "admin/menu.html"
+        ],
+        "createdAt": "2026-11-24T19:17:48.710Z",
+        "reason": "Claude: the cream tones are Bazar's existing brand palette (site.css --rice/--sand), reused so the menu matches the website and the PDF the user already approved"
+      }
+    ]
+  }
+}

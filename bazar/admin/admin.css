@@ -216,3 +216,11 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px;background-ima
 /* Card heading with an action on the right */
 .card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .card-head h2{margin:0}
+
+/* Malayalam names setting (Products page) */
+.mlset{display:grid;grid-template-columns:1.1fr 1.4fr 1fr;gap:18px;align-items:center;margin-bottom:16px}
+.mlset h2{margin:0 0 4px}
+.mlset .switch{margin:0}
+.mlset .field{margin:0}
+@media (max-width:900px){.mlset{grid-template-columns:1fr}}
+.pname small[lang="ml"]{display:block;font-size:.85rem;opacity:.85}

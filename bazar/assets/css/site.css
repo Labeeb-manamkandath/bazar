@@ -449,3 +449,8 @@ body.has-buybar .fab-wa{bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 
 button.cat-tile{font:inherit;cursor:pointer}
 .cat-tile[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
 .cat-tile[aria-pressed="true"]:hover{color:#fff;transform:none}
+
+/* Malayalam product names (optional, switched on in the admin) */
+.p-ml{font-size:.9rem;font-weight:500;line-height:1.35;opacity:.78;margin-top:-1px}
+.pd-ml{font-size:clamp(1.05rem,2.2vw,1.3rem);font-weight:600;opacity:.8;margin:6px 0 2px}
+@media (max-width:640px){.p-ml{font-size:.8rem}}

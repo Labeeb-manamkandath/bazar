@@ -6,7 +6,7 @@
 <title>Bazar product menu</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Malayalam:wght@500;600;700&display=block">
 <style>
 /* Printable product menu. Built live from the website's products; "Save as PDF" in the print dialog makes the file. */
 @page{size:A4;margin:10mm 0 10mm}
@@ -43,6 +43,10 @@ h2 em{font-style:normal;font-size:8pt;font-weight:500;color:#8a7a55}
 .ph img{width:100%;height:100%;max-height:100%;object-fit:contain}
 .tx{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:4mm 3.4mm 3.2mm;border-top:.3mm solid #f2ecdc}
 .nm{font-weight:700;font-size:12.5pt;line-height:1.18;margin-bottom:1mm}
+.nm[lang="ml"]{font-family:'Noto Sans Malayalam',Poppins,sans-serif;font-size:12pt;line-height:1.3}
+.sub{font-size:9pt;font-weight:500;color:#5d6a5f;line-height:1.3;margin-bottom:1mm}
+.sub[lang="ml"]{font-family:'Noto Sans Malayalam',Poppins,sans-serif;font-size:9.5pt}
+.bar select{font:500 14px Poppins,sans-serif;border-radius:999px;border:0;padding:9px 14px}
 .ln{display:flex;justify-content:space-between;align-items:baseline;margin-top:1.6mm;gap:2mm}
 .q{font-size:10pt;font-weight:500;color:#6d6650}
 .pr{font-weight:800;font-size:16pt;color:#c4581a;white-space:nowrap}
@@ -53,7 +57,7 @@ footer b{color:#17402a}
 </style>
 </head>
 <body>
-<div class="bar"><span id="status">Preparing the menu…</span><button type="button" id="print" disabled>Save as PDF</button></div>
+<div class="bar"><span id="status">Preparing the menu…</span><span><label for="names" style="margin-right:8px">Names</label><select id="names"><option value="ml">Malayalam first</option><option value="both">English first</option><option value="en">English only</option></select></span><button type="button" id="print" disabled>Save as PDF</button></div>
 <div class="sheet"><div class="page" id="menu"></div></div>
 <script>
 (function () {
@@ -64,23 +68,20 @@ footer b{color:#17402a}
   const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   const status = document.getElementById('status'), btn = document.getElementById('print');
 
+  // Product name block, following the "Names in the downloaded menu" setting (or the choice in the bar above).
+  const nameHtml = (p, mode) => {
+    const en = `<div class="nm">${esc(p.name)}</div>`, ml = p.name_ml;
+    if (mode === 'en' || !ml) return en;
+    if (mode === 'both') return en + `<div class="sub" lang="ml">${esc(ml)}</div>`;
+    return `<div class="nm" lang="ml">${esc(ml)}</div><div class="sub">${esc(p.name)}</div>`;
+  };
+  let C = null;
   fetch('/api/public?r=catalog', { cache: 'no-store' }).then(r => r.json()).then(c => {
-    // Categories follow the order set in Admin → Categories.
-    const sections = c.categories.map(cat => {
-      const ps = c.products.filter(p => p.category && p.category.id === cat.id);
-      if (!ps.length) return '';
-      const cards = ps.map(p => `<div class="card"><div class="ph">${p.images[0] ? `<img src="${esc(p.images[0])}" alt="">` : ''}</div>
-        <div class="tx"><div><div class="nm">${esc(p.name)}</div>${p.in_stock ? '' : '<span class="oos">Out of stock</span>'}</div>
-        <div class="ln"><span class="q">${esc(qty(p))}</span><span class="pr">${money(p.price)}</span></div></div></div>`).join('');
-      return `<section><h2><span>${esc(cat.name)}</span><i></i><em>${ps.length} item${ps.length > 1 ? 's' : ''}</em></h2><div class="grid">${cards}</div></section>`;
-    }).join('');
-    document.getElementById('menu').innerHTML = `
-      <header><div class="brand"><small>clickfor.in</small><div class="wm"></div><b>ONLINE STORE</b></div>
-        <div class="hd"><h1>PRODUCT MENU</h1><p>Homemade &amp; daily essentials · Milky | Salsha</p></div></header>
-      <div class="contact"><span>${wa}Order on WhatsApp: 8086 7777 90</span><span>·</span><span>www.clickfor.in</span></div>
-      ${sections || '<p class="msg">No products yet.</p>'}
-      <footer><b>How to order:</b> send the item names and quantity on WhatsApp to <b>8086 7777 90</b>, or tap Buy on WhatsApp at <b>www.clickfor.in</b>.<br>Prices as on ${esc(today)}.</footer>`;
-    document.title = 'Bazar product menu ' + today;
+    C = c;
+    const sel = document.getElementById('names');
+    sel.value = (c.display && c.display.menu_names) || 'ml';
+    sel.addEventListener('change', () => { draw(C, sel.value); status.textContent = 'Names updated. Tap Save as PDF when ready.'; });
+    draw(c, sel.value);
     // Shrink each photo to a small JPEG first, so the PDF stays light enough to send on WhatsApp.
     const shrink = src => new Promise(res => {
       const im = new Image(); im.crossOrigin = 'anonymous';
@@ -91,14 +92,38 @@ footer b{color:#17402a}
         res(cv.toDataURL('image/jpeg', 0.8)); } catch (e) { res(src); } };
       im.onerror = () => res(src); im.src = src;
     });
-    const imgs = [...document.querySelectorAll('.ph img')].map(i => shrink(i.src).then(u => new Promise(r => { i.onload = i.onerror = r; i.src = u; if (i.complete) r(); })));
-    // Wait for photos and fonts, then open the print dialog (choose "Save as PDF").
-    Promise.all([...imgs, document.fonts ? document.fonts.ready : null]).then(() => {
+    // Keep the small copies on the products so redrawing (changing names) reuses them.
+    const jobs = c.products.filter(p => p.images[0]).map(p => shrink(p.images[0]).then(u => { p.images = [u, ...p.images.slice(1)]; }));
+    Promise.all([...jobs, document.fonts ? document.fonts.ready : null]).then(() => {
+      draw(c, sel.value);
+      const imgs = [...document.querySelectorAll('.ph img')].map(i => i.complete ? null : new Promise(r => { i.onload = i.onerror = r; })).filter(Boolean);
+      return Promise.all(imgs);
+    }).then(() => {
       status.textContent = c.products.length + ' products ready. In the print window, choose "Save as PDF".';
       btn.disabled = false;
       if (!/[?&]noprint/.test(location.search)) setTimeout(() => window.print(), 300);
     });
   }).catch(() => { status.textContent = 'Could not load products. Please check your internet and refresh.'; });
+
+  function draw(c, mode) {
+    // Categories follow the order set in Admin → Categories.
+    const sections = c.categories.map(cat => {
+      const ps = c.products.filter(p => p.category && p.category.id === cat.id);
+      if (!ps.length) return '';
+      const cards = ps.map(p => `<div class="card"><div class="ph">${p.images[0] ? `<img src="${esc(p.images[0])}" alt="">` : ''}</div>
+        <div class="tx"><div>${nameHtml(p, mode)}${p.in_stock ? '' : '<span class="oos">Out of stock</span>'}</div>
+        <div class="ln"><span class="q">${esc(qty(p))}</span><span class="pr">${money(p.price)}</span></div></div></div>`).join('');
+      return `<section><h2><span>${esc(cat.name)}</span><i></i><em>${ps.length} item${ps.length > 1 ? 's' : ''}</em></h2><div class="grid">${cards}</div></section>`;
+    }).join('');
+    document.getElementById('menu').innerHTML = `
+      <header><div class="brand"><small>clickfor.in</small><div class="wm"></div><b>ONLINE STORE</b></div>
+        <div class="hd"><h1>PRODUCT MENU</h1><p>Homemade &amp; daily essentials · Milky | Salsha</p></div></header>
+      <div class="contact"><span>${wa}Order on WhatsApp: 8086 7777 90</span><span>·</span><span>www.clickfor.in</span></div>
+      ${sections || '<p class="msg">No products yet.</p>'}
+      <footer><b>How to order:</b> send the item names and quantity on WhatsApp to <b>8086 7777 90</b>, or tap Buy on WhatsApp at <b>www.clickfor.in</b>.<br>Prices as on ${esc(today)}.</footer>`;
+    document.title = 'Bazar product menu ' + today;
+  }
+
 
   btn.addEventListener('click', () => window.print());
 })();

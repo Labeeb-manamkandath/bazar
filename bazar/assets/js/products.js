@@ -30,7 +30,7 @@
     let list = catalog.products.filter(p =>
       (!state.cat || p.category.id === state.cat) &&
       (!state.popular || p.popular) &&
-      (!q || (p.name + ' ' + p.description + ' ' + p.category.name).toLowerCase().includes(q)));
+      (!q || (p.name + ' ' + (p.name_ml || '') + ' ' + p.description + ' ' + p.category.name).toLowerCase().includes(q)));
     const by = {
       popular: (a, b) => (b.popular - a.popular) || (b.featured - a.featured) || new Date(b.created_at) - new Date(a.created_at),
       low: (a, b) => a.price - b.price,
