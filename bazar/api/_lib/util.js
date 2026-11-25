@@ -84,10 +84,10 @@ function cleanProduct(b, existing) {
 }
 
 // Malayalam names: show on the website (on/off) and how names appear in the downloadable menu.
-const MENU_NAMES = ['ml', 'both', 'en'];
+const MENU_NAMES = ['mlonly', 'ml', 'both', 'en'];
 function cleanDisplay(d) {
   d = d || {};
-  return { ml_site: d.ml_site === true, menu_names: MENU_NAMES.includes(d.menu_names) ? d.menu_names : 'ml' };
+  return { ml_site: d.ml_site === true, menu_names: MENU_NAMES.includes(d.menu_names) ? d.menu_names : 'mlonly' };
 }
 
 const DEFAULT_HOME = {

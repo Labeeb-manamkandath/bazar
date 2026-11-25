@@ -178,14 +178,14 @@
   };
 
   function products(v) {
-    v.innerHTML = `<div class="page-title"><h1>Products</h1><div class="pt-actions"><a class="btn btn-ghost" href="/admin/menu" target="_blank" rel="noopener" title="Opens a printable menu of all products. Choose Save as PDF.">${IC.doc} Download menu (PDF)</a><button class="btn btn-orange" id="addP" type="button">${IC.plus} Add product</button></div></div>
+    v.innerHTML = `<div class="page-title"><h1>Products</h1><div class="pt-actions"><a class="btn btn-ghost" href="/admin/menu" target="_blank" rel="noopener" title="Opens the menu of all products and downloads it as a PDF.">${IC.doc} Download menu (PDF)</a><button class="btn btn-orange" id="addP" type="button">${IC.plus} Add product</button></div></div>
       <div class="filters"><input type="search" id="fq" placeholder="Search products" aria-label="Search products" value="${esc(ui.q)}">
         <select id="fc" aria-label="Filter by category"><option value="">All categories</option>${S.categories.map(c => `<option value="${c.id}" ${ui.cat === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
         <select id="fs" aria-label="Filter by status">${[['', 'All products'], ['active', 'Active'], ['inactive', 'Inactive'], ['popular', 'Most loved'], ['oos', 'Out of stock'], ['missing', 'Missing WhatsApp link']].map(o => `<option value="${o[0]}" ${ui.status === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
         <select id="fo" aria-label="Sort products">${[['new', 'Recently added'], ['updated', 'Recently updated'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['plh', 'Price: low to high'], ['phl', 'Price: high to low']].map(o => `<option value="${o[0]}" ${ui.sort === o[0] ? 'selected' : ''}>Sort: ${o[1]}</option>`).join('')}</select></div>
       <div class="card mlset"><div><h2>Malayalam names</h2><p class="hint">Add a Malayalam name to each product (optional). English stays the main name.</p></div>
         <label class="switch"><input type="checkbox" id="mlSite" ${S.display && S.display.ml_site ? 'checked' : ''}><div><b>Show on the website</b><span>Malayalam name appears under the English name on product cards and pages</span></div></label>
-        <div class="field"><label for="mlMenu">Names in the downloaded menu</label><select id="mlMenu">${[['ml', 'Malayalam first, English below'], ['both', 'English first, Malayalam below'], ['en', 'English only']].map(o => `<option value="${o[0]}" ${(S.display ? S.display.menu_names : 'ml') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
+        <div class="field"><label for="mlMenu">Names in the downloaded menu</label><select id="mlMenu">${[['mlonly', 'Malayalam only'], ['ml', 'Malayalam first, English below'], ['both', 'English first, Malayalam below'], ['en', 'English only']].map(o => `<option value="${o[0]}" ${(S.display ? S.display.menu_names : 'mlonly') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
       <div id="plist"></div>`;
     $('#addP').addEventListener('click', () => productForm(null));
     $('#fq').addEventListener('input', e => { ui.q = e.target.value; drawProducts(); });
