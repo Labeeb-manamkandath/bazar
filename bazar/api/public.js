@@ -29,12 +29,8 @@ async function catalog() {
 
   const h = settings.home || {};
   const home = { ...U.DEFAULT_HOME, ...h, hero: { ...U.DEFAULT_HOME.hero, ...(h.hero || {}) } };
-  const order = Array.isArray(home.popular_ids) ? home.popular_ids : [];
-  const popular = products.filter(p => p.popular)
-    .sort((a, b) => {
-      const ia = order.indexOf(a.id), ib = order.indexOf(b.id);
-      return (ia < 0 ? 1e6 : ia) - (ib < 0 ? 1e6 : ib) || new Date(b.created_at) - new Date(a.created_at);
-    }).map(p => p.id);
+  // Most Loved follows the same Custom order as every other product list.
+  const popular = products.filter(p => p.popular).map(p => p.id);
   const homeCats = (Array.isArray(home.category_ids) && home.category_ids.length
     ? home.category_ids.filter(id => catById[id]) : categories.map(c => c.id));
   return { categories, products, display: U.cleanDisplay(settings.display), home: { hero: home.hero, banners: Array.isArray(home.banners) ? home.banners.filter(b => b && b.image).slice(0, U.MAX_BANNERS) : [], popular_ids: popular, category_ids: homeCats } };
