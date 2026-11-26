@@ -21,7 +21,7 @@ async function catalog() {
   const activeCats = cats.filter(c => c.active).sort((a, b) => (a.sort || 0) - (b.sort || 0) || a.name.localeCompare(b.name));
   const catById = Object.fromEntries(activeCats.map(c => [c.id, c]));
   const videos = settings.product_videos || {}, ml = settings.product_ml || {};
-  const products = prods.filter(p => p.status === 'active' && catById[p.category_id])
+  const products = U.orderProducts(prods, settings.product_order).filter(p => p.status === 'active' && catById[p.category_id])
     .map(p => ({ ...shapeProduct(p, catById[p.category_id]), video: videos[p.id] || '', name_ml: ml[p.id] || '' }));
   const counts = {};
   products.forEach(p => { counts[p.category.id] = (counts[p.category.id] || 0) + 1; });

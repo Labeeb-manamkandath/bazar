@@ -70,7 +70,7 @@ module.exports = async function handler(req, res) {
       });
       const videos = settings.product_videos || {}, ml = settings.product_ml || {};
       products.forEach(p => { p.video = videos[p.id] || ''; p.name_ml = ml[p.id] || ''; });
-      return ok(res, { categories, products, display: U.cleanDisplay(settings.display), home: { ...U.DEFAULT_HOME, ...(settings.home || {}), hero: { ...U.DEFAULT_HOME.hero, ...((settings.home || {}).hero || {}) } }, policies, user: session.u });
+      return ok(res, { categories, products, product_order: U.orderProducts(products, settings.product_order).map(p => p.id), display: U.cleanDisplay(settings.display), home: { ...U.DEFAULT_HOME, ...(settings.home || {}), hero: { ...U.DEFAULT_HOME.hero, ...((settings.home || {}).hero || {}) } }, policies, user: session.u });
     }
 
     /* ---------- one-time starter import (categories, products, photos) ---------- */
@@ -248,6 +248,16 @@ module.exports = async function handler(req, res) {
         if (!!p.popular !== want) await db.update('products', p.id, { popular: want });
       }
       return ok(res, { home });
+    }
+
+    /* ---------- product order (Custom order on the Products page) ---------- */
+    if (action === 'product.order' && isPost) {
+      const body = await U.readBody(req, 20000);
+      const known = new Set((await db.all('products')).map(p => p.id));
+      const seen = new Set();
+      const ids = (Array.isArray(body.ids) ? body.ids : []).filter(id => typeof id === 'string' && known.has(id) && !seen.has(id) && seen.add(id));
+      await db.setSetting('product_order', ids);
+      return ok(res, { product_order: ids });
     }
 
     /* ---------- display settings (Malayalam names) ---------- */

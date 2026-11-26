@@ -224,3 +224,11 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px;background-ima
 .mlset .field{margin:0}
 @media (max-width:900px){.mlset{grid-template-columns:1fr}}
 .pname small[lang="ml"]{display:block;font-size:.85rem;opacity:.85}
+
+/* Custom product order */
+.reorder-hint{margin:0 0 10px;font-size:.9rem;background:#fff4e5;border:1.5px dashed #e2762b;border-radius:12px;padding:10px 14px}
+.reorder tr[draggable]{cursor:grab}
+.reorder tr.dragging{opacity:.4}
+.reorder tr.drop-above td{box-shadow:inset 0 3px 0 #e2762b}
+.reorder tr.drop-below td{box-shadow:inset 0 -3px 0 #e2762b}
+.grip{color:#b9ab86;font-size:14px;letter-spacing:-3px;margin-right:2px;user-select:none;cursor:grab}

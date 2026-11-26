@@ -175,14 +175,28 @@
     za: (a, b) => b.name.localeCompare(a.name),
     plh: (a, b) => (+a.price || 0) - (+b.price || 0),
     phl: (a, b) => (+b.price || 0) - (+a.price || 0),
+    custom: (a, b) => orderIdx(a.id) - orderIdx(b.id),
   };
+  // Custom order: set here, used on the website and in the downloaded menu.
+  const orderIdx = id => { const i = (S.product_order || []).indexOf(id); return i < 0 ? -1 : i; };
+  const fullOrder = () => S.products.slice().sort(SORTS.custom).map(p => p.id);
+  async function moveProduct(id, targetId, after) {
+    const ids = fullOrder().filter(x => x !== id);
+    const at = ids.indexOf(targetId);
+    if (at < 0) return;
+    ids.splice(after ? at + 1 : at, 0, id);
+    S.product_order = ids; drawProducts();
+    const r = await api('product.order', { ids });
+    if (!r.ok) { toast(r.error || 'Could not save the order.', true); await refresh(); drawProducts(); return; }
+    S.product_order = r.product_order; toast('Order saved. The website and menu are updated.');
+  }
 
   function products(v) {
     v.innerHTML = `<div class="page-title"><h1>Products</h1><div class="pt-actions"><a class="btn btn-ghost" href="/admin/menu" target="_blank" rel="noopener" title="Opens the menu of all products and downloads it as a PDF.">${IC.doc} Download menu (PDF)</a><button class="btn btn-orange" id="addP" type="button">${IC.plus} Add product</button></div></div>
       <div class="filters"><input type="search" id="fq" placeholder="Search products" aria-label="Search products" value="${esc(ui.q)}">
         <select id="fc" aria-label="Filter by category"><option value="">All categories</option>${S.categories.map(c => `<option value="${c.id}" ${ui.cat === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
         <select id="fs" aria-label="Filter by status">${[['', 'All products'], ['active', 'Active'], ['inactive', 'Inactive'], ['popular', 'Most loved'], ['oos', 'Out of stock'], ['missing', 'Missing WhatsApp link']].map(o => `<option value="${o[0]}" ${ui.status === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
-        <select id="fo" aria-label="Sort products">${[['new', 'Recently added'], ['updated', 'Recently updated'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['plh', 'Price: low to high'], ['phl', 'Price: high to low']].map(o => `<option value="${o[0]}" ${ui.sort === o[0] ? 'selected' : ''}>Sort: ${o[1]}</option>`).join('')}</select></div>
+        <select id="fo" aria-label="Sort products">${[['new', 'Recently added'], ['updated', 'Recently updated'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['plh', 'Price: low to high'], ['phl', 'Price: high to low'], ['custom', 'Custom order (rearrange)']].map(o => `<option value="${o[0]}" ${ui.sort === o[0] ? 'selected' : ''}>Sort: ${o[1]}</option>`).join('')}</select></div>
       <div class="card mlset"><div><h2>Malayalam names</h2><p class="hint">Add a Malayalam name to each product (optional). English stays the main name.</p></div>
         <label class="switch"><input type="checkbox" id="mlSite" ${S.display && S.display.ml_site ? 'checked' : ''}><div><b>Show on the website</b><span>Malayalam name appears under the English name on product cards and pages</span></div></label>
         <div class="field"><label for="mlMenu">Names in the downloaded menu</label><select id="mlMenu">${[['mlonly', 'Malayalam only'], ['ml', 'Malayalam first, English below'], ['both', 'English first, Malayalam below'], ['en', 'English only']].map(o => `<option value="${o[0]}" ${(S.display ? S.display.menu_names : 'mlonly') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
@@ -212,14 +226,40 @@
     const list = filteredProducts(), box = $('#plist');
     if (!S.products.length) { box.innerHTML = `<div class="card empty"><h2>No products yet</h2><p class="muted" style="margin-bottom:16px">Add your first product. It will appear on the website right away.</p><button class="btn btn-orange" id="addP2" type="button">${IC.plus} Add product</button></div>`; $('#addP2').addEventListener('click', () => productForm(null)); return; }
     if (!list.length) { box.innerHTML = `<div class="card empty"><h2>No products match</h2><p class="muted">Try a different search or filter.</p></div>`; return; }
-    box.innerHTML = `<div class="card tblcard" style="padding:6px 8px"><table class="tbl"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Status</th><th>Updated</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${list.map(p => `<tr>
-        <td><div class="pname">${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b>${p.name_ml ? `<small lang="ml">${esc(p.name_ml)}</small>` : ''}<small>${esc(qtyLine(p))}</small></div></div></td>
+    const re = ui.sort === 'custom';
+    const mv = (p, i) => re ? `<button class="icon-btn" data-mu="${p.id}" aria-label="Move ${esc(p.name)} up" title="Move up" ${i === 0 ? 'disabled' : ''}>${IC.up}</button><button class="icon-btn" data-md="${p.id}" aria-label="Move ${esc(p.name)} down" title="Move down" ${i === list.length - 1 ? 'disabled' : ''}>${IC.down}</button>` : '';
+    const grip = re ? '<span class="grip" aria-hidden="true" title="Drag to move">⋮⋮</span>' : '';
+    box.innerHTML = `${re ? '<p class="reorder-hint">Drag a product, or use the arrows, to change its place. This order is used on the website and in the menu.</p>' : ''}<div class="card tblcard${re ? ' reorder' : ''}" style="padding:6px 8px"><table class="tbl"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Status</th><th>Updated</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${list.map((p, i) => `<tr${re ? ` draggable="true" data-row="${p.id}"` : ''}>
+        <td><div class="pname">${grip}${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b>${p.name_ml ? `<small lang="ml">${esc(p.name_ml)}</small>` : ''}<small>${esc(qtyLine(p))}</small></div></div></td>
         <td>${esc(catName(p.category_id))}</td><td><b>${priceLine(p)}</b></td><td><div style="display:flex;gap:6px;flex-wrap:wrap">${pills(p)}</div></td><td>${fdate(p.updated_at)}</td>
-        <td><div class="row-actions"><button class="icon-btn" data-edit="${p.id}" aria-label="Edit ${esc(p.name)}" title="Edit">${IC.edit}</button><button class="icon-btn danger" data-del="${p.id}" aria-label="Delete ${esc(p.name)}" title="Delete">${IC.trash}</button></div></td></tr>`).join('')}</tbody></table></div>
-      <div class="cards">${list.map(p => `<div class="pc">${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b><div class="small muted">${esc(catName(p.category_id))} · ${priceLine(p)}${qtyLine(p) ? ' · ' + esc(qtyLine(p)) : ''}</div><div class="meta">${pills(p)}</div><div class="small muted">Updated ${fdate(p.updated_at)}</div></div>
-        <div class="row-actions"><button class="btn btn-sm btn-ghost" data-edit="${p.id}">${IC.edit} Edit</button><button class="btn btn-sm btn-ghost" data-del="${p.id}">${IC.trash} Delete</button></div></div>`).join('')}</div>`;
+        <td><div class="row-actions">${mv(p, i)}<button class="icon-btn" data-edit="${p.id}" aria-label="Edit ${esc(p.name)}" title="Edit">${IC.edit}</button><button class="icon-btn danger" data-del="${p.id}" aria-label="Delete ${esc(p.name)}" title="Delete">${IC.trash}</button></div></td></tr>`).join('')}</tbody></table></div>
+      <div class="cards">${list.map((p, i) => `<div class="pc">${thumb(p.images[0], p.name)}<div><b>${esc(p.name)}</b><div class="small muted">${esc(catName(p.category_id))} · ${priceLine(p)}${qtyLine(p) ? ' · ' + esc(qtyLine(p)) : ''}</div><div class="meta">${pills(p)}</div><div class="small muted">Updated ${fdate(p.updated_at)}</div></div>
+        <div class="row-actions">${mv(p, i)}<button class="btn btn-sm btn-ghost" data-edit="${p.id}">${IC.edit} Edit</button><button class="btn btn-sm btn-ghost" data-del="${p.id}">${IC.trash} Delete</button></div></div>`).join('')}</div>`;
     box.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => productForm(S.products.find(p => p.id === b.dataset.edit))));
     box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteProduct(S.products.find(p => p.id === b.dataset.del))));
+    if (re) {
+      const ids = list.map(p => p.id);
+      box.querySelectorAll('[data-mu]').forEach(b => b.addEventListener('click', () => { const i = ids.indexOf(b.dataset.mu); if (i > 0) moveProduct(ids[i], ids[i - 1], false); }));
+      box.querySelectorAll('[data-md]').forEach(b => b.addEventListener('click', () => { const i = ids.indexOf(b.dataset.md); if (i < ids.length - 1) moveProduct(ids[i], ids[i + 1], true); }));
+      let dragId = null;
+      box.querySelectorAll('tr[data-row]').forEach(tr => {
+        tr.addEventListener('dragstart', e => { dragId = tr.dataset.row; tr.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragId); });
+        tr.addEventListener('dragend', () => { tr.classList.remove('dragging'); box.querySelectorAll('.drop-above,.drop-below').forEach(x => x.classList.remove('drop-above', 'drop-below')); });
+        tr.addEventListener('dragover', e => {
+          if (!dragId || dragId === tr.dataset.row) return;
+          e.preventDefault();
+          const r = tr.getBoundingClientRect(), below = e.clientY > r.top + r.height / 2;
+          box.querySelectorAll('.drop-above,.drop-below').forEach(x => x.classList.remove('drop-above', 'drop-below'));
+          tr.classList.add(below ? 'drop-below' : 'drop-above');
+        });
+        tr.addEventListener('drop', e => {
+          e.preventDefault();
+          if (!dragId || dragId === tr.dataset.row) return;
+          moveProduct(dragId, tr.dataset.row, tr.classList.contains('drop-below'));
+          dragId = null;
+        });
+      });
+    }
     box.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', async () => {
       const p = S.products.find(x => x.id === b.dataset.id), t = b.dataset.t;
       const patch = { id: p.id };

@@ -32,7 +32,8 @@
       (!state.popular || p.popular) &&
       (!q || (p.name + ' ' + (p.name_ml || '') + ' ' + p.description + ' ' + p.category.name).toLowerCase().includes(q)));
     const by = {
-      popular: (a, b) => (b.popular - a.popular) || (b.featured - a.featured) || new Date(b.created_at) - new Date(a.created_at),
+      // Default: the order set in Admin → Products → Custom order (the catalog already comes in that order).
+      popular: (a, b) => catalog.products.indexOf(a) - catalog.products.indexOf(b),
       low: (a, b) => a.price - b.price,
       high: (a, b) => b.price - a.price,
       new: (a, b) => new Date(b.created_at) - new Date(a.created_at),

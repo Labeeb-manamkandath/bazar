@@ -90,6 +90,17 @@ function cleanDisplay(d) {
   return { ml_site: d.ml_site === true, menu_names: MENU_NAMES.includes(d.menu_names) ? d.menu_names : 'mlonly' };
 }
 
+// Product order set in Admin → Products (Custom order). Products not yet placed come first, newest first.
+function orderProducts(list, ids) {
+  const pos = new Map((Array.isArray(ids) ? ids : []).map((id, i) => [id, i]));
+  const t = p => new Date(p.created_at || 0).getTime();
+  return list.slice().sort((a, b) => {
+    const x = pos.has(a.id) ? pos.get(a.id) : -1, y = pos.has(b.id) ? pos.get(b.id) : -1;
+    if (x < 0 && y < 0) return t(b) - t(a);
+    return x - y;
+  });
+}
+
 const DEFAULT_HOME = {
   hero: {
     headline: 'Your favourites are just one WhatsApp away!',
@@ -172,4 +183,4 @@ function cleanVideo(v, storagePublic) {
   return { value: '', error: 'Use a YouTube link, or upload a video file.' };
 }
 
-module.exports = { cleanDisplay, MENU_NAMES, youtubeId, cleanVideo, cleanBanners, MAX_BANNERS, isSiteLink, send, readBody, slugify, str, cleanProduct, cleanSections, isWaLink, isImageUrl, DEFAULT_HOME, DEFAULT_POLICIES, WA_GENERAL, WA_PHONE, PRICE_UNITS };
+module.exports = { orderProducts, cleanDisplay, MENU_NAMES, youtubeId, cleanVideo, cleanBanners, MAX_BANNERS, isSiteLink, send, readBody, slugify, str, cleanProduct, cleanSections, isWaLink, isImageUrl, DEFAULT_HOME, DEFAULT_POLICIES, WA_GENERAL, WA_PHONE, PRICE_UNITS };
